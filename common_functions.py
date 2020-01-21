@@ -196,7 +196,7 @@ def extractFeaturesAndLabelsForSVM(input_features_list, feature_set, classificat
 		input_features = input_features.split(",")
 		domains = int(input_features[feature_parser("Domain")].strip())
 
-		if classification_type=="single vs multi-domain":
+		if classification_type=="single_vs_multiDomain":
 			if domains > 1:
 				label = "multi"
 			else:
@@ -283,7 +283,7 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 		total_performance_dict[key]["Correct"] = correctly_labelled_chains_dictionary[key]["Total"]
 		total_performance_dict[key]["Total"] = test_dataset_dictionary[key]["Total"]
 		if total_performance_dict[key]["Total"]!=0:
-			total_performance_dict[key]["Accuracy"] = "{0:.2f}".format((total_performance_dict[key]["Correct"]*100)/total_performance_dict[key]["Total"])
+			total_performance_dict[key]["Accuracy"] = "{0:.2f}".format((total_performance_dict[key]["Correct"]*100)/total_performance_dict[key]["Total"])+"%"
 
 		#Evaluating the performance on Contiguous chains for a particular key(Domain)
 		contiguous_performance_dict = SVM_performance_dictionary["Contiguous"]
@@ -291,7 +291,7 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 		contiguous_performance_dict[key]["Correct"] = correctly_labelled_chains_dictionary[key]["Contiguous"]
 		contiguous_performance_dict[key]["Total"] = test_dataset_dictionary[key]["Contiguous"]
 		if contiguous_performance_dict[key]["Total"]!=0:
-			contiguous_performance_dict[key]["Accuracy"] = "{0:.2f}".format((contiguous_performance_dict[key]["Correct"]*100)/contiguous_performance_dict[key]["Total"])
+			contiguous_performance_dict[key]["Accuracy"] = "{0:.2f}".format((contiguous_performance_dict[key]["Correct"]*100)/contiguous_performance_dict[key]["Total"])+"%"
 
 
 		#Evaluating the performance on Non-Contiguous chains for a particular key(Domain)
@@ -300,9 +300,9 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 		non_contiguous_performance_dict[key]["Correct"] = correctly_labelled_chains_dictionary[key]["Non-Contiguous"]
 		non_contiguous_performance_dict[key]["Total"] = test_dataset_dictionary[key]["Non-Contiguous"]
 		if non_contiguous_performance_dict[key]["Total"]!=0:
-			non_contiguous_performance_dict[key]["Accuracy"] = "{0:.2f}".format((non_contiguous_performance_dict[key]["Correct"]*100)/non_contiguous_performance_dict[key]["Total"])
+			non_contiguous_performance_dict[key]["Accuracy"] = "{0:.2f}".format((non_contiguous_performance_dict[key]["Correct"]*100)/non_contiguous_performance_dict[key]["Total"])+"%"
 
-	if classification_type=="single vs multi-domain":
+	if classification_type=="single_vs_multiDomain":
 		new_dict = {"Contiguous":{}, "Non-Contiguous":{}, "Total":{}}
 		for key, value in SVM_performance_dictionary.iteritems():
 
@@ -315,19 +315,19 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 					new_dict[key]["Single"]["Correct"]+=SVM_performance_dictionary[key][key1]["Correct"]
 					new_dict[key]["Single"]["Total"]+=SVM_performance_dictionary[key][key1]["Total"]
 					if new_dict[key]["Single"]["Total"]!=0:
-						new_dict[key]["Single"]["Accuracy"] = "{0:.2f}".format((new_dict[key]["Single"]["Correct"]*100.0)/new_dict[key]["Single"]["Total"])
+						new_dict[key]["Single"]["Accuracy"] = "{0:.2f}".format((new_dict[key]["Single"]["Correct"]*100.0)/new_dict[key]["Single"]["Total"])+"%"
 
 				elif key1!="Total":
 					new_dict[key]["Multi"]["Correct"]+=SVM_performance_dictionary[key][key1]["Correct"]
 					new_dict[key]["Multi"]["Total"]+=SVM_performance_dictionary[key][key1]["Total"]
 					if new_dict[key]["Multi"]["Total"]!=0:
-						new_dict[key]["Multi"]["Accuracy"] = "{0:.2f}".format((new_dict[key]["Multi"]["Correct"]*100.0)/new_dict[key]["Multi"]["Total"])
+						new_dict[key]["Multi"]["Accuracy"] = "{0:.2f}".format((new_dict[key]["Multi"]["Correct"]*100.0)/new_dict[key]["Multi"]["Total"])+"%"
 
 				elif key1=="Total":
 					new_dict[key]["Total"]["Correct"]+=SVM_performance_dictionary[key][key1]["Correct"]
 					new_dict[key]["Total"]["Total"]+=SVM_performance_dictionary[key][key1]["Total"]
 					if new_dict[key]["Total"]["Total"]!=0:
-						new_dict[key]["Total"]["Accuracy"] = "{0:.2f}".format((new_dict[key]["Total"]["Correct"]*100.0)/new_dict[key]["Total"]["Total"])
+						new_dict[key]["Total"]["Accuracy"] = "{0:.2f}".format((new_dict[key]["Total"]["Correct"]*100.0)/new_dict[key]["Total"]["Total"])+"%"
 
 
 
@@ -365,25 +365,8 @@ def SVM_Multi_Domain_Performance_Analyser(correctly_labelled_chains, test_datase
 	analyzed_correctly_labelled_chains = multi_domain_dataset_analyzer(correctly_labelled_chains)
 
 
-	print
-	print
-
-
-	print "Analyzed Test Dataset"
-	print analyzed_test_dataset
-	print
-	print
-
-	print "Analyzed Correctly Predicted Data"
-	print analyzed_correctly_labelled_chains
-
-	print
-	print
-
 	results_dict = {}
 	overall_results_dict = {CORRECT_CHAINS : {CONTIGUOUS : 0, NON_CONTIGUOUS : 0, TOTAL : 0}, TOTAL_CHAINS : {CONTIGUOUS : 0, NON_CONTIGUOUS : 0, TOTAL : 0}}
-
-
 
 
 	for key, value in analyzed_correctly_labelled_chains.iteritems():
@@ -403,7 +386,7 @@ def SVM_Multi_Domain_Performance_Analyser(correctly_labelled_chains, test_datase
 
 
 	for key, value in sorted(results_dict.iteritems()):
-		print key
+		print str(key)+"-domain"
 		for key_1, value_1 in sorted(value.iteritems()):
 			print key_1, value_1
 		print

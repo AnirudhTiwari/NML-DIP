@@ -7,10 +7,7 @@ def classify(training_data, testing_data, feature_set, classification_type):
 	X_train, y_train = utils.extractFeaturesAndLabelsForSVM(training_data, feature_set, classification_type)
 	X_test, y_test = utils.extractFeaturesAndLabelsForSVM(testing_data, feature_set, classification_type)
 	
-	print "Training data => ", len(X_train), len(y_train)
-	print "Testing data => ", len(X_test), len(y_test)
-
-	clf = svm.SVC().fit(X_train, y_train)
+	clf = svm.SVC(gamma='auto').fit(X_train, y_train)
 
 	predicted_label = clf.predict(X_test)
 
@@ -90,7 +87,7 @@ def classifyMultiDomainProteins_v2(training_data, testing_data, feature_set, cla
 	correct_chains = []
 	incorrect_chains = []
 
-	clf = svm.SVC(probability=True).fit(X_train, y_train)
+	clf = svm.SVC(probability=True, gamma='auto').fit(X_train, y_train)
 	for chain in testing_data:
 
 		domains = utils.findNumberOfDomains(chain, None)

@@ -5,41 +5,6 @@ import calculateFeatures
 import csv
 import json
 import K_Means
-# import K_means_experimental as Km_experimental
-
-
-#This function takes as an input list of list where the fundamental list looks like this [{pdb: {length, IS-Sum_2, IS-Sum_3, IS-Sum_4}}, Domain] where the domain can be assigned/correct depending
-# on the case. It extracts the features [Length, IS-Sum_2, IS-Sum_3, IS-Sum_4] along with CATH annotation and prints it out in .csv for ananlysis like this:
-#Chain:  1fmtA ,  Domains (CATH):  2 ,  Domain 1 :  1 - 208 ,  Domain 2 :  209 - 313 ,  Length:  308 ,  IS-Sum_2:  3.6 ,  IS-Sum_3:  13.8 ,  IS-Sum_4:  34.0 ,  Assigned Domain:  2
-
-
-def dumpMultiDomainClassificationOutput(chains_with_assignedDomains_and_featureSet):
-
-	for entry in chains_with_assignedDomains_and_featureSet:
-		
-		chain_dict = entry[0]
-		assigned_domain = entry[1]
-
-		chain = chain_dict.keys()[0]
-		feature_vector = chain_dict.values()[0]
-		correct_domain = utils.findNumberOfDomains(chain)
-
-		Km_experimental.applyKMeans(chain)
-		counter = 0 
-		for feature in feature_vector:
-			if counter == 0:
-				print "Length: ",
-			elif counter == 1:
-				print "IS-Sum_2: ",
-			elif counter == 2:
-				print "IS-Sum_3: ",
-			elif counter == 3:
-				print "IS-Sum_4: ",	
-			print feature, ", ",
-			counter+=1
-
-		print "Assigned Domain: ", assigned_domain
-
 
 def get_input_dataset_name(x):
 	return {
@@ -67,11 +32,6 @@ def get_input_dataset_features_file(x):
 		"Self-Created" : "self_created_dataset_features_v2.csv"
 	}[x]
 
-def get_multi_domain_identification_method(x):
-	return {
-		"A" : "Identification based on optimizing Density And Interaction Energy",
-	}[x]
-
 #Taking user input for test dataset
 while 1:
 	testing_dataset_input = raw_input("Input Testing Dataset: Type A for Benchmark_2, B for Benchmark_3, C for ASTRAL SCOP 30, D for Self-Created\n")
@@ -84,8 +44,11 @@ while 1:
 	except KeyError:
 		print "Invalid input!!"
 
-print "Identifying single-domain vs multi-domain proteins\n"
-
+print
+print "#############################--------STEP 1--------#####################################"
+print
+print "CLASSIFYING SINGLE-DOMAIN vs MULTI-DOMAIN PROTEINS\n"
+print 
 feature_set = []
 while 1:
 	featureSet_input = raw_input("Select features to be used for training and testing:\nType L for Length\nType I for Interaction_Energy\nType R for Radius_of_Gyration\nType D for Density\nFor multiple features, give space sepearated input. For eg. L D for Length & Density\n").split()
@@ -100,13 +63,15 @@ while 1:
 	except KeyError:
 		print "Invalid Input!!"
 
-file_training_dataset_features = "self_created_training_dataset_features_vAlt.csv"
+file_training_dataset_features = "single_vs_multi_training_dataset.csv"
+
+print "----------------------------------------------------------------------------------------"
+print 
 
 with open(file_training_dataset_features) as f:
 	SVM_train_data = f.readlines()
 
-classifier = "single vs multi-domain"
-
+classifier = "single_vs_multiDomain"
 if testing_dataset_input != 'E':
 	file_testing_dataset_features = get_input_dataset_features_file(testing_dataset)
 
@@ -121,8 +86,8 @@ correct_chains_with_features, incorrect_chains_with_features = SVM_v2.classify(S
 
 utils.SVM_Performance_Analyser(correct_chains_with_features, SVM_test_data, classifier)
 
-correct_chains_output_file_name = "output_correct"+"_"+testing_dataset+"_"+classifier+".txt"
-inccorect_chains_with_features_output_file_name = "output_incorrect"+"_"+testing_dataset+"_"+classifier+".txt"
+correct_chains_output_file_name = "output_correct"+"_"+testing_dataset+"_"+classifier+".csv"
+inccorect_chains_with_features_output_file_name = "output_incorrect"+"_"+testing_dataset+"_"+classifier+".csv"
 
 
 f = open(correct_chains_output_file_name,"w+")
@@ -142,7 +107,9 @@ for x in SVM_test_data:
 for chain_with_features in incorrect_chains_with_features:
 	f1.write("%s\n" % chain_with_features.strip())
 
-print "Saved incorrectly labelled chains to: ", inccorect_chains_with_features_output_file_name, "\n"
+print "----------------------------------------------------------------------------------------"
+print
+print "Saved incorrectly classified proteins to:", inccorect_chains_with_features_output_file_name, "\n"
 
 
 for chain_with_features in correct_chains_with_features:
@@ -158,9 +125,14 @@ for chain_with_features in correct_chains_with_features:
   	single_correct_chains.append(pdb+chain)
 
 
-print "Saved correctly labelled chains to: ", correct_chains_output_file_name, "\n"
+print "Saved correctly classified proteins to:", correct_chains_output_file_name, "\n"
 
-print "Identifying multi-domain proteins\n"
+print "----------------------------------------------------------------------------------------"
+print
+print "#############################--------STEP 2--------#####################################"
+print
+print "CLASSIFYING MULTI-DOMAIN PROTEINS\n"
+print
 
 feature_set = []
 
@@ -183,6 +155,9 @@ while 1:
 	except KeyError:
 		print "Invalid Input!!"
 
+print "----------------------------------------------------------------------------------------"
+print 
+
 
 with open('self_created_multi_training_dataset_features_v5.json', 'r') as f:
     SVM_multi_train_data = json.load(f)
@@ -193,24 +168,6 @@ print "Feature set is ", feature_set
 
 correct_chains_withDomains, incorrect_chains_withAssignedDomains = SVM_v2.classifyMultiDomainProteins_v2(SVM_multi_train_data, multi_correct_chains, feature_set, classifier)
 
-# print ########################################################
-# print
-# print "PRINTING CORRECT CHAINS DATA"
-# print
-# dumpMultiDomainClassificationOutput(correct_chains_withDomains)
-# print
-# print ########################################################
-# print
-
-# print
-# print ########################################################
-# print
-# print "PRINTING INCORRECT CHAINS DATA"
-# print
-# dumpMultiDomainClassificationOutput(incorrect_chains_withAssignedDomains)
-# print
-# print ########################################################
-# print
 
 print "Performance of multi-domin identification"
 
@@ -221,6 +178,9 @@ for chain in correct_chains_withDomains:
 
 utils.SVM_Multi_Domain_Performance_Analyser(correct_chains, multi_correct_chains)
 
+print
+print "#############################--------STEP 3--------#####################################"
+print
 
 correct_chains_post_kmeans, incorrect_chains_post_kmeans = K_Means.applyKMeans(correct_chains)
 
@@ -231,9 +191,14 @@ utils.SVM_Multi_Domain_Performance_Analyser(correct_chains_post_kmeans, correct_
 
 
 print
+print "#############################--------OVERALL PERFORMANCE--------#####################################"
+print
+
+print
 print "Overall Performance"
 print
-utils.SVM_Multi_Domain_Performance_Analyser(correct_chains_post_kmeans + single_correct_chains, total_test_chains)
+total_correct_chains = correct_chains_post_kmeans + single_correct_chains
+utils.SVM_Multi_Domain_Performance_Analyser(total_correct_chains, total_test_chains)
 
 
 
