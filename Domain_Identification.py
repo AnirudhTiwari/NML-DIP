@@ -5,13 +5,17 @@ import calculateFeatures
 import csv
 import json
 import K_Means
+import time
+import shutil
+
+OUTPUT_FOLDER = "OutputFiles"
 
 def get_input_dataset_name(x):
 	return {
 		'A' : "Benchmark_2",
 		'B' : "Benchmark_3",
 		'C' : "ASTRAL SCOP30",
-		'D' : "Self-Created"
+		'D' : "NR_Dataset"
 	}[x]
 
 def get_input_feature_name(x):
@@ -26,15 +30,15 @@ def get_input_feature_name(x):
 
 def get_input_dataset_features_file(x):
 	return {
-		"Benchmark_2" : "BenchmarkTwo_Features_vAlt.csv",
-		"Benchmark_3" : "BenchmarkThree_Features_v2.csv",
-		"ASTRAL SCOP30" : "Astral_Scop30_features_v3.csv",
-		"Self-Created" : "self_created_dataset_features_v2.csv"
+		"Benchmark_2" : "BenchmarkTwo_Features.csv",
+		"Benchmark_3" : "BenchmarkThree_Features.csv",
+		"ASTRAL SCOP30" : "Astral_Scop30_features.csv",
+		"NR_Dataset" : "NR_dataset_features.csv"
 	}[x]
 
 #Taking user input for test dataset
 while 1:
-	testing_dataset_input = raw_input("Input Testing Dataset: Type A for Benchmark_2, B for Benchmark_3, C for ASTRAL SCOP 30, D for Self-Created\n")
+	testing_dataset_input = raw_input("Input Testing Dataset: Type A for Benchmark_2, B for Benchmark_3, C for ASTRAL SCOP 30, D for NR_Dataset\n")
 	try:
 		testing_dataset = get_input_dataset_name(testing_dataset_input)
 		if testing_dataset_input == 'E':
@@ -86,8 +90,8 @@ correct_chains_with_features, incorrect_chains_with_features = SVM_v2.classify(S
 
 utils.SVM_Performance_Analyser(correct_chains_with_features, SVM_test_data, classifier)
 
-correct_chains_output_file_name = "output_correct"+"_"+testing_dataset+"_"+classifier+".csv"
-inccorect_chains_with_features_output_file_name = "output_incorrect"+"_"+testing_dataset+"_"+classifier+".csv"
+correct_chains_output_file_name = "output_correct"+"_"+testing_dataset+"_"+classifier+"_"+str(time.time())+".csv"
+inccorect_chains_with_features_output_file_name = "output_incorrect"+"_"+testing_dataset+"_"+classifier+"_"+str(time.time())+ ".csv"
 
 
 f = open(correct_chains_output_file_name,"w+")
@@ -107,9 +111,12 @@ for x in SVM_test_data:
 for chain_with_features in incorrect_chains_with_features:
 	f1.write("%s\n" % chain_with_features.strip())
 
+f1.close()
+shutil.move(inccorect_chains_with_features_output_file_name, OUTPUT_FOLDER+"/"+inccorect_chains_with_features_output_file_name)
+
 print "----------------------------------------------------------------------------------------"
 print
-print "Saved incorrectly classified proteins to:", inccorect_chains_with_features_output_file_name, "\n"
+print "Saved incorrectly classified proteins to:", OUTPUT_FOLDER + "/" + inccorect_chains_with_features_output_file_name, "\n"
 
 
 for chain_with_features in correct_chains_with_features:
@@ -124,8 +131,11 @@ for chain_with_features in correct_chains_with_features:
   else:
   	single_correct_chains.append(pdb+chain)
 
+f.close()
+shutil.move(correct_chains_output_file_name, OUTPUT_FOLDER+"/"+correct_chains_output_file_name)
 
-print "Saved correctly classified proteins to:", correct_chains_output_file_name, "\n"
+print "Saved correctly classified proteins to:", OUTPUT_FOLDER + "/" + correct_chains_output_file_name, "\n"
+
 
 print "----------------------------------------------------------------------------------------"
 print
@@ -199,14 +209,3 @@ print "Overall Performance"
 print
 total_correct_chains = correct_chains_post_kmeans + single_correct_chains
 utils.SVM_Multi_Domain_Performance_Analyser(total_correct_chains, total_test_chains)
-
-
-
-
-
-
-
-
-
-
-
