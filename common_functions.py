@@ -119,7 +119,7 @@ def dist(a,b):
 		return distance
 
 def findNumberOfDomains(pdb, chain=None):
-	with open('CathDomall', 'r') as f:
+	with open('HelperData/CathDomall', 'r') as f:
 		cath_data = f.readlines()
 	for x in cath_data:
 		if chain!=None:
@@ -130,7 +130,7 @@ def findNumberOfDomains(pdb, chain=None):
 				return int(x[7]+x[8])
 
 
-with open("is_Chain_Contiguous_NonContiguous.csv") as f:
+with open("HelperData/is_Chain_Contiguous_NonContiguous.csv") as f:
 	chain_contiguous_or_not_data = f.readlines()
 
 chain_contiguous_or_not_dict = {}

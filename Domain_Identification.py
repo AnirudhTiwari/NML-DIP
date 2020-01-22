@@ -67,7 +67,7 @@ while 1:
 	except KeyError:
 		print "Invalid Input!!"
 
-file_training_dataset_features = "single_vs_multi_training_dataset.csv"
+file_training_dataset_features = "TrainingData/single_vs_multi_training_dataset.csv"
 
 print "----------------------------------------------------------------------------------------"
 print 
@@ -169,7 +169,7 @@ print "-------------------------------------------------------------------------
 print 
 
 
-with open('self_created_multi_training_dataset_features_v5.json', 'r') as f:
+with open('TrainingData/multiDomain_training_dataset_features.json', 'r') as f:
     SVM_multi_train_data = json.load(f)
 
 classifier = "multi-domain"

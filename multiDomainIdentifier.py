@@ -12,7 +12,7 @@ import InteractionEnergy
 import numpy as np
 import re
 import Density
-from SvmFeatures.calculateFeatures import calculateFeatures
+import calculateFeatures
 from sklearn import svm
 
 path_to_pdb_files = 'All PDBs/'
@@ -31,7 +31,7 @@ def identifyNumberOfDomainsForAGivenPdbAndChain(pdb, chain, feature_set):
 
 		labels_kMeans = kMeans.labels_
 
-		features_map = calculateFeatures([pdb+chain], feature_set, k)
+		features_map = calculateFeatures.calculateFeatures([pdb+chain], feature_set, k)
 
 		features = features_map[pdb+chain]
 

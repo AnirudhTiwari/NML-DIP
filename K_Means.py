@@ -449,7 +449,7 @@ This is the ingress point for any program calling k-means. It takes as an input 
 # cluster output and deems is to be correct if more than 75% of the residues are correctly assigned to the correct cluster as per CATH. 
 '''
 def applyKMeans(input_chains):
-	with open('CathDomall', 'r') as f:
+	with open('HelperData/CathDomall', 'r') as f:
 		cath_data = f.readlines()
 
 	path_to_pdb_files = 'All PDBs/'
