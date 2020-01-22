@@ -30,10 +30,10 @@ def get_input_feature_name(x):
 
 def get_input_dataset_features_file(x):
 	return {
-		"Benchmark_2" : "BenchmarkTwo_Features.csv",
-		"Benchmark_3" : "BenchmarkThree_Features.csv",
-		"ASTRAL SCOP30" : "Astral_Scop30_features.csv",
-		"NR_Dataset" : "NR_dataset_features.csv"
+		"Benchmark_2" : "Single Vs Multi Precalculated Features/BenchmarkTwo_singleVsMulti_features.csv",
+		"Benchmark_3" : "Single Vs Multi Precalculated Features/BenchmarkThree_singleVsMulti_features.csv",
+		"ASTRAL SCOP30" : "Single Vs Multi Precalculated Features/Astral_Scop30_singleVsMulti_features.csv",
+		"NR_Dataset" : "Single Vs Multi Precalculated Features/NR_dataset_singleVsMulti_features.csv"
 	}[x]
 
 #Taking user input for test dataset
