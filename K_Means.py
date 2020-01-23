@@ -624,43 +624,48 @@ def applyKMeansForSingleProteinWithGivenK(pdbId, k):
 	
 	#This method looks for scattered patches of residues which are present in the wrong cluster.
 	#And based on the sequence as well as centroid distance, merges them in the right cluster.
-	new_boundaries = stitchPatches(boundaries, clusters_km, cords_list, realId_list, patch_size)
+	try:
+		new_boundaries = stitchPatches(boundaries, clusters_km, cords_list, realId_list, patch_size)
+	except IndexError:
+		print "#########################################################################"
+		print "[WARNING] Problem applying post-processing for PDB: " + pdb + ", Chain: " + chain
+		new_boundaries = boundaries
+	finally: 
 
-	#Again removing duplicates post stitching patches.
-	for key,value in new_boundaries.iteritems():
-		new_boundaries[key] = list(set(value))
+		#Again removing duplicates post stitching patches.
+		for key,value in new_boundaries.iteritems():
+			new_boundaries[key] = list(set(value))
 
-	#This a dictionary of the CATH domains and their correpsonding boundaries.
-	cathBoundaries = getCathBoundaries(domain_boundary, cath_domains)
+		#This a dictionary of the CATH domains and their correpsonding boundaries.
+		cathBoundaries = getCathBoundaries(domain_boundary, cath_domains)
 
-	#Final boundaries of both CATH and K-Means which are sorted based on the values of residues, for example the first cluster should be from 1-80.
-	#The second from 81-160 and not the other way round.
-	sorted_cathBoundaries = {}
-	sorted_kMeansBoundaries = {}
+		#Final boundaries of both CATH and K-Means which are sorted based on the values of residues, for example the first cluster should be from 1-80.
+		#The second from 81-160 and not the other way round.
+		sorted_cathBoundaries = {}
+		sorted_kMeansBoundaries = {}
 
-	domain_counter = 1
+		domain_counter = 1
 
-	for key in sorted(new_boundaries, key=new_boundaries.get):
-		value = new_boundaries[key]
-		sorted_kMeansBoundaries[domain_counter] = value
-		domain_counter+=1
+		for key in sorted(new_boundaries, key=new_boundaries.get):
+			value = new_boundaries[key]
+			sorted_kMeansBoundaries[domain_counter] = value
+			domain_counter+=1
 
-	domain_counter = 1
+		domain_counter = 1
 
-	for key in sorted(cathBoundaries, key=cathBoundaries.get):
-		value = cathBoundaries[key]
-		sorted_cathBoundaries[domain_counter] = value
-		domain_counter+=1
+		for key in sorted(cathBoundaries, key=cathBoundaries.get):
+			value = cathBoundaries[key]
+			sorted_cathBoundaries[domain_counter] = value
+			domain_counter+=1
 
-	#Print CATH and K-Means boundaries in a human readable format
-	print "#########################################################################"
-	print "PDB: "+pdb + ", Chain: "+chain.upper()
-	print "------------------------------------Our Annotation-----------------------"
-	print "Number of domains: " + str(k) 
-	printKMeansDict(sorted_kMeansBoundaries)
-	print
-	print "------------------------------------CATH Annotation----------------------"
-	print "Number of domains: " + str(cath_domains)
-	printDicts(cathBoundaries)
+		#Print CATH and K-Means boundaries in a human readable format
+		print "#########################################################################"
+		print "PDB: "+pdb + ", Chain: "+chain.upper()
+		print "------------------------------------Our Annotation-----------------------"
+		print "Number of domains: " + str(k) 
+		printKMeansDict(sorted_kMeansBoundaries)
+		print "------------------------------------CATH Annotation----------------------"
+		print "Number of domains: " + str(cath_domains)
+		printDicts(cathBoundaries)
 
  

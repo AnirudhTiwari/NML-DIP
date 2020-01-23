@@ -4,8 +4,9 @@ import stepOne
 import stepTwo
 import stepThree
 import json
+import sys
 
-INPUT_PDB_LIST = ["1ddzA", "1uc8A", "1tuhA"]
+#Constants
 SINGLE_VS_MULTI_DOMAIN_IDENTIFICATION_TRAINING_DATASET_FEATURES_FILE = "TrainingData/single_vs_multi_training_dataset.csv"
 MULTI_DOMAIN_IDENTIFICATION_TRAINING_DATASET_FEATURES_FILE = "TrainingData/multiDomain_training_dataset_features.json"
 SINGLE_VS_MULTI_FEATURE_SET = ["Length", "Interaction_Energy", "Density"]
@@ -29,19 +30,27 @@ def getMultiDomainClassifier(multiDomainFeatureSet):
 	X_train, y_train = utils.extractFeaturesAndLabelsForSVMFromJson(svm_multi_train_data, multiDomainFeatureSet, MULTI_DOMAIN)
 	return svm.SVC(gamma='auto').fit(X_train, y_train)
 
+def getInputChains():
+	with open(str(sys.argv[1]), 'r') as f:
+		testDataset = f.readlines()
+	return testDataset
 
+#Main execution of the program begins here
+testDataset = getInputChains()
 singleVsMultiDomainClassifier = getSingleVsMultiDomainClassifier(SINGLE_VS_MULTI_FEATURE_SET)
 multiDomainClassifier = getMultiDomainClassifier(MULTI_DOMAIN_FEATURE_SET)
 
-for pdb in INPUT_PDB_LIST:
-	label = stepOne.classifySingleVsMultiDomainProtein(pdb, SINGLE_VS_MULTI_FEATURE_SET, singleVsMultiDomainClassifier)
+for pdb in testDataset:
+	if pdb.isspace()!=True: 
+		pdb = pdb.strip()
+		label = stepOne.classifySingleVsMultiDomainProtein(pdb, SINGLE_VS_MULTI_FEATURE_SET, singleVsMultiDomainClassifier)
 
-	if label=="multi":
-		domains = stepTwo.classifyMultiDomainProteins(pdb, MULTI_DOMAIN_FEATURE_SET, multiDomainClassifier)
-	else:
-		domains = 1
+		if label=="multi":
+			domains = stepTwo.classifyMultiDomainProteins(pdb, MULTI_DOMAIN_FEATURE_SET, multiDomainClassifier)
+		else:
+			domains = 1
 
-	stepThree.applyKMeansWithPostProcessing(pdb, domains)
-	
+		stepThree.applyKMeansWithPostProcessing(pdb, domains)
+		
 		
 
