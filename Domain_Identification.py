@@ -1,4 +1,5 @@
 import SVM_v2
+from sklearn import svm
 import common_functions as utils
 import multiDomainIdentifier
 import calculateFeatures
@@ -7,6 +8,7 @@ import json
 import K_Means
 import time
 import shutil
+import stepOne
 
 OUTPUT_FOLDER = "OutputFiles"
 
@@ -15,7 +17,8 @@ def get_input_dataset_name(x):
 		'A' : "Benchmark_2",
 		'B' : "Benchmark_3",
 		'C' : "ASTRAL SCOP30",
-		'D' : "NR_Dataset"
+		'D' : "NR_Dataset",
+		'E' : "E"
 	}[x]
 
 def get_input_feature_name(x):
@@ -83,8 +86,12 @@ if testing_dataset_input != 'E':
 		SVM_test_data = f.readlines()
 
 else:
-	SVM_test_data = calculateFeatures.calculateFeatures_v2([testing_dataset], feature_set, 2)[testing_dataset]
-	print SVM_test_data
+	X_train, y_train = utils.extractFeaturesAndLabelsForSVM(SVM_train_data, feature_set, classifier)
+	clf = svm.SVC(gamma='auto').fit(X_train, y_train)
+	label = stepOne.classifySingleVsMultiDomainProtein(testing_dataset, feature_set, clf)
+	print "booga booga"
+	print label
+	# SVM_test_data = calculateFeatures.calculateFeatures_v2([testing_dataset], feature_set, 2)[testing_dataset]
 
 correct_chains_with_features, incorrect_chains_with_features = SVM_v2.classify(SVM_train_data, SVM_test_data, feature_set, classifier)
 
