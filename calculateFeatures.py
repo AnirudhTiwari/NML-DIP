@@ -5,9 +5,7 @@ should have an ingress point from here. Currently supported features are
 Density, Length, Interaction Energy, Radius Of Gyration, and Density Sum
 '''
 import Density as density
-import radius_of_gyration as RG
 import InteractionEnergy as IE
-import DensitySum as DS
 import Length as length
 import common_functions as utils
 
@@ -17,14 +15,8 @@ def calculateLength(pdb, chain):
 def calculateInteractionEnergy(pdb, chain, num_of_clusters):
 	return IE.calculateInteractionEnergy(pdb, chain, num_of_clusters)
 
-def calculateRadiusOfGyration(pdb, chain):
-	return RG.calculateRadiusOfGyration(pdb, chain)
-
 def calculateDensity(pdb, chain):
 	return density.calculateDensity(pdb, chain)
-
-def calculateDensitySum(pdb, chain, num_of_clusters):
-	return DS.calculateDensitySum(pdb, chain, num_of_clusters)
 
 #A map of feature and its corresponding method which is to be invoked
 features = {
@@ -33,9 +25,7 @@ features = {
 	"IS-Sum_2" : calculateInteractionEnergy,
 	"IS-Sum_3" : calculateInteractionEnergy,
 	"IS-Sum_4" : calculateInteractionEnergy,
-	"Radius_Of_Gyration" : calculateRadiusOfGyration,
 	"Density" : calculateDensity,
-	"Density_Sum" : calculateDensitySum
 }
 
 '''
@@ -142,8 +132,3 @@ def calculateFeatures_v2(input_chains, feature_set, num_of_clusters):
 		feature_map[pdb+chain] = feature_values
 
 	return feature_map
-
-
-
-
-

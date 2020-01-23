@@ -30,13 +30,13 @@ def getMultiDomainClassifier(multiDomainFeatureSet):
 	X_train, y_train = utils.extractFeaturesAndLabelsForSVMFromJson(svm_multi_train_data, multiDomainFeatureSet, MULTI_DOMAIN)
 	return svm.SVC(gamma='auto').fit(X_train, y_train)
 
-def getInputChains():
+def getTestDataset():
 	with open(str(sys.argv[1]), 'r') as f:
 		testDataset = f.readlines()
 	return testDataset
 
 #Main execution of the program begins here
-testDataset = getInputChains()
+testDataset = getTestDataset()
 singleVsMultiDomainClassifier = getSingleVsMultiDomainClassifier(SINGLE_VS_MULTI_FEATURE_SET)
 multiDomainClassifier = getMultiDomainClassifier(MULTI_DOMAIN_FEATURE_SET)
 
@@ -51,6 +51,3 @@ for pdb in testDataset:
 			domains = 1
 
 		stepThree.applyKMeansWithPostProcessing(pdb, domains)
-		
-		
-
