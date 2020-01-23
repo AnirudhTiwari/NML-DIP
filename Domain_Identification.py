@@ -89,8 +89,6 @@ else:
 	X_train, y_train = utils.extractFeaturesAndLabelsForSVM(SVM_train_data, feature_set, classifier)
 	clf = svm.SVC(gamma='auto').fit(X_train, y_train)
 	label = stepOne.classifySingleVsMultiDomainProtein(testing_dataset, feature_set, clf)
-	print "booga booga"
-	print label
 	# SVM_test_data = calculateFeatures.calculateFeatures_v2([testing_dataset], feature_set, 2)[testing_dataset]
 
 correct_chains_with_features, incorrect_chains_with_features = SVM_v2.classify(SVM_train_data, SVM_test_data, feature_set, classifier)

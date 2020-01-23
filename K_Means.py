@@ -417,7 +417,6 @@ def makeReadable(boundaries):
 
 def printDicts(dictionary):
 	domain_counter = 1
-	print "\"",
 	domains=len(dictionary)
 	for key in sorted(dictionary, key=dictionary.get):
 		value = dictionary[key]
@@ -427,10 +426,9 @@ def printDicts(dictionary):
 			print
 			print
 		domain_counter+=1
-	print "\"",
+	print
 
 def printKMeansDict(k_means):
-	print "\"",
 	domain_counter = 1
 	domains = len(k_means)
 	for key,value in k_means.iteritems():
@@ -440,9 +438,7 @@ def printKMeansDict(k_means):
 			print
 			print
 		domain_counter+=1
-
-	print "\"",
-
+	print
 '''
 This is the ingress point for any program calling k-means. It takes as an input chain+pdb in lowercase and outputs the result of k-means after reading k from CATH.
 # The output is in a .csv format fine tuned to be human readable when imported as an excel sheet. Also, it evaluates the
@@ -573,6 +569,98 @@ def applyKMeans(input_chains):
 			print x
 
 	return correct_chains, incorrect_chains
+
+
+def applyKMeansForSingleProteinWithGivenK(pdbId, k):
+	with open('HelperData/CathDomall', 'r') as f:
+		cath_data = f.readlines()
+
+	path_to_pdb_files = 'All PDBs/'
+	cath_dict = {} # A dictionary to hold cath pdb+chain and corresponding entry in CATH
+
+	for x in cath_data:
+		if x[0]!='#':
+			cath_dict[x[:5].lower()] = x
+
+	pdb = pdbId[:4].lower()
+	chain = pdbId[4].lower()
+
+	cath_entry = cath_dict[pdb+chain]
+	cath_domains = int(cath_entry[7] + cath_entry[8])
 	
+	cath_entry = cath_dict[pdb+chain]
 
+	domain_boundary = cath_entry[14:].strip()
 
+	open_pdb = open(path_to_pdb_files+pdb+'.pdb','r') #Opening pdb file for k-means
+	
+	cords_list, realId_list = getCordsList(open_pdb, chain.upper())
+	
+	x = np.asarray(cords_list)
+
+	km = KMeans(n_clusters=k).fit(x)
+
+	labels_km = km.labels_
+	clusters_km = km.cluster_centers_
+
+	boundaries = getDomainBoundaries(labels_km, realId_list, k) #The clusters(boundaries) outputted by k-means
+
+	#Removing duplicates. This happen when there are two set of coordinates of the same residue like 142 and 142A. I just pick the first one.
+	for key,value in boundaries.iteritems():
+		boundaries[key] = list(set(value))
+
+	#There are missing residues in pdb files but are not always shown in CATH data. 
+	#Thus, if there are less than 25 residues missing then I fill those missing residues based on the
+	#cluster in which they can belong as per their sequence number. Else, the missing residues are reflected in the final answer.
+	if not TooManyMissingResidues(boundaries):
+		boundaries = fillVoids(boundaries)
+	else:
+		boundaries = fillVoids(boundaries) #Comment this out if you are not testing benchmark 2/3
+		# print "THIS PDB IS MISSED!!", pdb+chain
+		# missingPDB.append(pdb+chain+str(domains)+','+str(utils.isChainContigous(pdb+chain.upper())))
+		# continue
+
+	
+	
+	#This method looks for scattered patches of residues which are present in the wrong cluster.
+	#And based on the sequence as well as centroid distance, merges them in the right cluster.
+	new_boundaries = stitchPatches(boundaries, clusters_km, cords_list, realId_list, patch_size)
+
+	#Again removing duplicates post stitching patches.
+	for key,value in new_boundaries.iteritems():
+		new_boundaries[key] = list(set(value))
+
+	#This a dictionary of the CATH domains and their correpsonding boundaries.
+	cathBoundaries = getCathBoundaries(domain_boundary, cath_domains)
+
+	#Final boundaries of both CATH and K-Means which are sorted based on the values of residues, for example the first cluster should be from 1-80.
+	#The second from 81-160 and not the other way round.
+	sorted_cathBoundaries = {}
+	sorted_kMeansBoundaries = {}
+
+	domain_counter = 1
+
+	for key in sorted(new_boundaries, key=new_boundaries.get):
+		value = new_boundaries[key]
+		sorted_kMeansBoundaries[domain_counter] = value
+		domain_counter+=1
+
+	domain_counter = 1
+
+	for key in sorted(cathBoundaries, key=cathBoundaries.get):
+		value = cathBoundaries[key]
+		sorted_cathBoundaries[domain_counter] = value
+		domain_counter+=1
+
+	#Print CATH and K-Means boundaries in a human readable format
+	print "#########################################################################"
+	print "PDB: "+pdb + ", Chain: "+chain.upper()
+	print "------------------------------------Our Annotation-----------------------"
+	print "Number of domains: " + str(k) 
+	printKMeansDict(sorted_kMeansBoundaries)
+	print
+	print "------------------------------------CATH Annotation----------------------"
+	print "Number of domains: " + str(cath_domains)
+	printDicts(cathBoundaries)
+
+ 
