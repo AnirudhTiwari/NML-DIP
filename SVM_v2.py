@@ -4,22 +4,31 @@ import calculateFeatures
 import numpy as np
 
 def classify(training_data, testing_data, feature_set, classification_type):
-	X_train, y_train = utils.extractFeaturesAndLabelsForSVM(training_data, feature_set, classification_type)
-	X_test, y_test = utils.extractFeaturesAndLabelsForSVM(testing_data, feature_set, classification_type)
+	X_train, y_train = utils.extractFeaturesAndLabelsForSVMFromJson(training_data, feature_set, classification_type)
+	# X_test, y_test = utils.extractFeaturesAndLabelsForSVMFromJson(testing_data, feature_set, classification_type)
 	
 	clf = svm.SVC(gamma='auto').fit(X_train, y_train)
 
-	predicted_label = clf.predict(X_test)
-
+	
 	correct_chains = []
 	incorrect_chains = []
 
-	for i in range(0, len(y_test)):
-		data = testing_data[i].split(",")
-		if predicted_label[i]==y_test[i]:
-			correct_chains.append(testing_data[i])
+	for chain in testing_data:
+		chain = chain.strip()
+		cath_domains = utils.findNumberOfDomains(chain, None)
+
+		if cath_domains > 1:
+			correct_label = "multi"
 		else:
-			incorrect_chains.append(testing_data[i])
+			correct_label = "single" 
+
+		feature_map = calculateFeatures.calculateFeatures_v2([chain], feature_set, 2)
+		assigned_domains = clf.predict(np.array(feature_map[chain]).reshape(1,-1))[0]
+
+		if assigned_domains == correct_label:
+			correct_chains.append(chain)
+		else:
+			incorrect_chains.append(chain)
 
 	return correct_chains, incorrect_chains
 
@@ -92,10 +101,7 @@ def classifyMultiDomainProteins_v2(training_data, testing_data, feature_set, cla
 
 		domains = utils.findNumberOfDomains(chain, None)
 
-		max_probablity = -1000000000
-
 		feature_map = calculateFeatures.calculateFeatures_v2([chain], feature_set, domains)
-
 		assigned_domains = clf.predict(np.array(feature_map[chain]).reshape(1,-1))[0]
 
 		if assigned_domains == domains:

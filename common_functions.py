@@ -42,7 +42,7 @@ def getCoordinatesListFromPDB(pdb, chain):
 		if(data[0]=='E' and data[1]=='N' and data[2]=='D'):
 			break
 
-		if(data[0]=='A' and data[1]=='T' and data[2]=='O' and data[21].lower()==chain.lower() and data[13]=='C' and data[14]=='A'):
+		if(data[0]=='A' and data[1]=='T' and data[2]=='O' and data[21].lower()==chain.lower() and data[13]=='C' and data[14]=='A') or (data[0]=='H' and data[1]=='E' and data[2]=='T' and data[21].lower()==chain.lower() and data[13]=='C' and data[14]=='A'):
 
 			val = value_finder(22, 26, data)	
 						
@@ -163,7 +163,16 @@ def extractFeaturesAndLabelsForSVMFromJson(features_dictionary, feature_set, cla
 	for key, value in features_dictionary.iteritems():
 		pdb = key
 		
-		label = features_dictionary[key]["Domains"]
+		domains = features_dictionary[key]["Domains"]
+
+		if classification_type=="single_vs_multiDomain":
+			if domains > 1:
+				label = "multi"
+			else:
+				label = "single"
+		else:
+			label = domains
+
 
 		data = []
 
@@ -223,11 +232,12 @@ def datasetAnalyser(dataset):
 	domains_dictionary = {"Total":{"Contiguous":0, "Non-Contiguous":0, "Total":0}}
 
 	for data in dataset:
-		data = data.split(",")
-		
-		domains = int(data[feature_parser("Domain")].strip())
-		PDB = data[feature_parser("PDB")].strip()
-		Chain = data[feature_parser("Chain")].strip()
+		# data = data.split(",")
+		data = data.strip()
+		# domains = int(data[feature_parser("Domain")].strip())
+		PDB = data[:4].strip()
+		Chain = data[4].strip()
+		domains = findNumberOfDomains(data, None)
 
 		#Explicitly setting single domain proteins as contiguous to avoid chains with fragments.
 		if domains!=1:
@@ -413,6 +423,7 @@ def multi_domain_dataset_analyzer(dataset):
 	analyzed_data_dict = {}
 
 	for chain in dataset:
+		chain=chain.strip()
 		domains = findNumberOfDomains(chain)
 
 		if domains not in analyzed_data_dict:

@@ -26,7 +26,7 @@ def getCordsList(fileRead, chain):
 		if(data[0]=='E' and data[1]=='N' and data[2]=='D'):
 			break
 
-		if(data[0]=='A' and data[1]=='T' and data[2]=='O' and data[21]==chain and data[13]=='C' and data[14]=='A'):
+		if(data[0]=='A' and data[1]=='T' and data[2]=='O' and data[21]==chain and data[13]=='C' and data[14]=='A') or (data[0]=='H' and data[1]=='E' and data[2]=='T' and data[21].lower()==chain.lower() and data[13]=='C' and data[14]=='A'):
 
 			val = utils.value_finder(22, 26, data)	
 						
