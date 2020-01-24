@@ -1,5 +1,6 @@
 import math
 import re
+import json
 
 path_to_pdb_files = 'All PDBs/'
 
@@ -231,13 +232,17 @@ dataset => List of all the features which are calculated and stored in a .csv fi
 def datasetAnalyser(dataset):
 	domains_dictionary = {"Total":{"Contiguous":0, "Non-Contiguous":0, "Total":0}}
 
+	with open("HelperData/pdb_to_domains_map.json") as f:
+		pdb_to_domain_map = json.load(f)
+	f.close()
+
 	for data in dataset:
 		# data = data.split(",")
 		data = data.strip()
 		# domains = int(data[feature_parser("Domain")].strip())
 		PDB = data[:4].strip()
-		Chain = data[4].strip()
-		domains = findNumberOfDomains(data, None)
+		Chain = data[4].strip().upper()
+		domains = pdb_to_domain_map[data]
 
 		#Explicitly setting single domain proteins as contiguous to avoid chains with fragments.
 		if domains!=1:
@@ -422,9 +427,13 @@ def SVM_Multi_Domain_Performance_Analyser(correctly_labelled_chains, test_datase
 def multi_domain_dataset_analyzer(dataset):
 	analyzed_data_dict = {}
 
+	with open("HelperData/pdb_to_domains_map.json") as f:
+		pdb_to_domain_map = json.load(f)
+	f.close()
+
 	for chain in dataset:
 		chain=chain.strip()
-		domains = findNumberOfDomains(chain)
+		domains = pdb_to_domain_map[chain]
 
 		if domains not in analyzed_data_dict:
 			analyzed_data_dict[domains] = {CONTIGUOUS : 0, NON_CONTIGUOUS : 0, TOTAL : 0}

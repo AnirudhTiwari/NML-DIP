@@ -3,27 +3,27 @@ from sklearn import svm
 import calculateFeatures
 import numpy as np
 
-def classify(training_data, testing_data, feature_set, classification_type):
+def classify(training_data, testing_data, testing_data_features, feature_set, classification_type):
 	X_train, y_train = utils.extractFeaturesAndLabelsForSVMFromJson(training_data, feature_set, classification_type)
-	# X_test, y_test = utils.extractFeaturesAndLabelsForSVMFromJson(testing_data, feature_set, classification_type)
-	
 	clf = svm.SVC(gamma='auto').fit(X_train, y_train)
 
-	
 	correct_chains = []
 	incorrect_chains = []
 
 	for chain in testing_data:
 		chain = chain.strip()
-		cath_domains = utils.findNumberOfDomains(chain, None)
+		cath_domains = testing_data_features[chain]["Domains"]
 
 		if cath_domains > 1:
 			correct_label = "multi"
 		else:
 			correct_label = "single" 
 
-		feature_map = calculateFeatures.calculateFeatures_v2([chain], feature_set, 2)
-		assigned_domains = clf.predict(np.array(feature_map[chain]).reshape(1,-1))[0]
+		features = []
+		for feature in feature_set:
+			features.append(testing_data_features[chain][feature])
+
+		assigned_domains = clf.predict(np.array(features).reshape(1,-1))[0]
 
 		if assigned_domains == correct_label:
 			correct_chains.append(chain)
@@ -31,50 +31,6 @@ def classify(training_data, testing_data, feature_set, classification_type):
 			incorrect_chains.append(chain)
 
 	return correct_chains, incorrect_chains
-
-
-'''
-This method tries to find the number of domains for a multi-domain protein by executing the following steps:
-1. The SVM is trained for the given features
-2. For each k=2 to 4 for each entry in the test data set, features are calculated. Density Sum and Interaction Energy will vary 
-for various values of k.
-3. Then, for each set of features, test the SVM and get the confidence score. Pick the k with the max confidence.
-'''
-
-def classifyMultiDomainProteins(training_data, testing_data, feature_set, classification_type):
-	X_train, y_train = utils.extractFeaturesAndLabelsForSVMFromJson(training_data, feature_set, classification_type)
-
-	correct_chains = []
-	incorrect_chains = []
-
-	print "Training Data => ", len(X_train), len(y_train)
-	print "Testing Data => ", len(testing_data)
-
-	clf = svm.SVC(probability=True).fit(X_train, y_train)
-
-
-	for chain in testing_data:
-
-		domains = utils.findNumberOfDomains(chain, None)
-
-		max_probablity = -1000000000
-
-		for k in range (2,5):
-			feature_map = calculateFeatures.calculateFeatures_v2([chain], feature_set, k)
-			prediction_confidence = clf.predict_proba([feature_map[chain]])[0][k-2]
-
-			if  prediction_confidence > max_probablity:
-				max_probablity = prediction_confidence
-				assigned_domains = k
-
-
-		if assigned_domains == domains:
-			correct_chains.append(chain)
-		else:
-			incorrect_chains.append(chain)
-
-	return correct_chains, incorrect_chains
-
 
 '''
 This method is to be used when we are using the updated algorithm whereby we are using IS-Sum1, IS-Sum2, IS-Sum3 and Length as feature vectors. 
@@ -91,23 +47,25 @@ feature map looks like this -> "1a0hA": {
     }
 '''
 
-def classifyMultiDomainProteins_v2(training_data, testing_data, feature_set, classification_type):
+def classifyMultiDomainProteins_v2(training_data, testing_data, testing_data_features, feature_set, classification_type):
 	X_train, y_train = utils.extractFeaturesAndLabelsForSVMFromJson(training_data, feature_set, classification_type)
 	correct_chains = []
 	incorrect_chains = []
 
 	clf = svm.SVC(probability=True, gamma='auto').fit(X_train, y_train)
 	for chain in testing_data:
+		domains = testing_data_features[chain]["Domains"]
+		features = []
 
-		domains = utils.findNumberOfDomains(chain, None)
+		for feature in feature_set:
+			features.append(testing_data_features[chain][feature])
 
-		feature_map = calculateFeatures.calculateFeatures_v2([chain], feature_set, domains)
-		assigned_domains = clf.predict(np.array(feature_map[chain]).reshape(1,-1))[0]
+		assigned_domains = clf.predict(np.array(features).reshape(1,-1))[0]
 
 		if assigned_domains == domains:
-			correct_chains.append([feature_map, domains])
+			correct_chains.append(chain)
 		else:
-			incorrect_chains.append([feature_map, assigned_domains])
+			incorrect_chains.append(chain)
 
 	return correct_chains, incorrect_chains
 

@@ -28,12 +28,19 @@ def get_input_feature_name(x):
 		'IS': "IS_Sum"
 	}[x]
 
-def get_input_dataset_features_file(x):
+def get_test_dataset(x):
 	return {
 		"Benchmark_2" : "TestDatasets/benchmark_2_chains.txt",
 		"Benchmark_3" : "TestDatasets/benchmark_3_chains.txt",
-		"ASTRAL SCOP30" : "Single Vs Multi Precalculated Features/Astral_Scop30_singleVsMulti_features.csv",
-		"NR_Dataset" : "Single Vs Multi Precalculated Features/NR_dataset_singleVsMulti_features.csv"
+		"ASTRAL SCOP30" : "TestDatasets/astral_scop_30_chains.txt",
+		"NR_Dataset" : "TestDatasets/nr_dataset_chains.txt"
+	}[x]
+def get_test_dataset_features(x):
+	return {
+	"Benchmark_2" : "PrecalculatedFeaturesForTestDatasets/benchmark_2_features.json",
+	"Benchmark_3" : "PrecalculatedFeaturesForTestDatasets/benchmark_3_features.json",
+	"ASTRAL SCOP30" : "PrecalculatedFeaturesForTestDatasets/astral_scop_30_features.json",
+	"NR_Dataset" : "PrecalculatedFeaturesForTestDatasets/nr_dataset_features.json"
 	}[x]
 
 #Taking user input for test dataset
@@ -41,8 +48,6 @@ while 1:
 	testing_dataset_input = raw_input("Input Testing Dataset: Type A for Benchmark_2, B for Benchmark_3, C for ASTRAL SCOP 30, D for NR_Dataset\n")
 	try:
 		testing_dataset = get_input_dataset_name(testing_dataset_input)
-		if testing_dataset_input == 'E':
-			testing_dataset = raw_input("Enter your chain for example: 1utgA\n")
 		print "You selected " + testing_dataset + " for testing the SVM\n"
 		break
 	except KeyError:
@@ -52,50 +57,47 @@ print
 print "#############################--------STEP 1--------#####################################"
 print
 print "CLASSIFYING SINGLE-DOMAIN vs MULTI-DOMAIN PROTEINS\n"
-print 
-feature_set = []
-while 1:
-	featureSet_input = raw_input("Select features to be used for training and testing:\nType L for Length\nType I for Interaction_Energy\nType R for Radius_of_Gyration\nType D for Density\nFor multiple features, give space sepearated input. For eg. L D for Length & Density\n").split()
-	print "You selected: ",
 
-	try:
-		for features in featureSet_input:
-			feature_set.append(get_input_feature_name(features))
-			print get_input_feature_name(features),
-		print
-		break
-	except KeyError:
-		print "Invalid Input!!"
+feature_set = ["Length", "Interaction_Energy", "Density"]
 
 file_training_dataset_features = "TrainingData/singleVsMultiTrainingDatasetFeatures.json"
-
-print "----------------------------------------------------------------------------------------"
+print "Feature set is: ", feature_set
 print 
-
 with open(file_training_dataset_features) as f:
 	SVM_train_data = json.load(f)
+f.close()
+
 
 classifier = "single_vs_multiDomain"
-if testing_dataset_input != 'E':
-	file_testing_dataset_features = get_input_dataset_features_file(testing_dataset)
+file_testing_dataset_features = get_test_dataset(testing_dataset)
 
-	with open(file_testing_dataset_features) as f:
-		SVM_test_data = f.readlines()
+with open(file_testing_dataset_features) as f:
+	SVM_test_data = f.readlines()
+f.close()
 
-else:
-	SVM_test_data = calculateFeatures.calculateFeatures_v2([testing_dataset], feature_set, 2)[testing_dataset]
-	print SVM_test_data
+test_dataset_feature_file = get_test_dataset_features(testing_dataset)
 
-correct_chains_with_features, incorrect_chains_with_features = SVM_v2.classify(SVM_train_data, SVM_test_data, feature_set, classifier)
+with open(test_dataset_feature_file) as f:
+	SVM_test_data_features = json.load(f)
+f.close()
 
+correct_chains_with_features, incorrect_chains_with_features = SVM_v2.classify(SVM_train_data, SVM_test_data, SVM_test_data_features, feature_set, classifier)
+
+print "----------------------------------------------------------------------------------------"
+print "Performance of single vs multi-domain identification"
+print 
 utils.SVM_Performance_Analyser(correct_chains_with_features, SVM_test_data, classifier)
 
 multi_correct_chains = []
 single_correct_chains = []
 
 
+with open("HelperData/pdb_to_domains_map.json") as f:
+	pdb_to_domain_map = json.load(f)
+f.close()
+
 for chain in correct_chains_with_features:
-	domains = utils.findNumberOfDomains(chain, None)
+	domains = pdb_to_domain_map[chain]
 	if int(domains) > 1:
 		multi_correct_chains.append(chain)
 	else:
@@ -109,30 +111,7 @@ print
 print "CLASSIFYING MULTI-DOMAIN PROTEINS\n"
 print
 
-feature_set = []
-
-while 1:
-	featureSet_input = raw_input("Select features to be used for training and testing:\nType L for Length\nType I for Interaction_Energy\nType IS for IS-Sum\nFor multiple features, give space sepearated input. For ex. L IS for Length & IS-Sum\n").split()
-	print "You selected: ",
-
-	try:
-		for features in featureSet_input:
-			feature = get_input_feature_name(features)
-			if feature == "IS_Sum":
-				feature_set.append("IS-Sum_2")
-				feature_set.append("IS-Sum_3")
-				feature_set.append("IS-Sum_4")
-			else:
-				feature_set.append(get_input_feature_name(features))
-			print get_input_feature_name(features),
-		print
-		break
-	except KeyError:
-		print "Invalid Input!!"
-
-print "----------------------------------------------------------------------------------------"
-print 
-
+feature_set = ["Length", "IS-Sum_2", "IS-Sum_3", "IS-Sum_4"]
 
 with open('TrainingData/multiDomainTrainingDatasetFeatures.json', 'r') as f:
     SVM_multi_train_data = json.load(f)
@@ -140,37 +119,31 @@ with open('TrainingData/multiDomainTrainingDatasetFeatures.json', 'r') as f:
 classifier = "multi-domain"
 
 print "Feature set is ", feature_set
+print
+step2_correct_chains, step2_incorrect_chains = SVM_v2.classifyMultiDomainProteins_v2(SVM_multi_train_data, multi_correct_chains, SVM_test_data_features, feature_set, classifier)
 
-correct_chains_withDomains, incorrect_chains_withAssignedDomains = SVM_v2.classifyMultiDomainProteins_v2(SVM_multi_train_data, multi_correct_chains, feature_set, classifier)
-
-
+print "----------------------------------------------------------------------------------------"
 print "Performance of multi-domin identification"
+print
 
-correct_chains = []
-for chain in correct_chains_withDomains:
-	correct_chains.append(chain[0].keys()[0])
+utils.SVM_Multi_Domain_Performance_Analyser(step2_correct_chains, multi_correct_chains)
 
-
-utils.SVM_Multi_Domain_Performance_Analyser(correct_chains, multi_correct_chains)
-
+print "----------------------------------------------------------------------------------------"
 print
 print "#############################--------STEP 3--------#####################################"
 print
 
-correct_chains_post_kmeans, incorrect_chains_post_kmeans = K_Means.applyKMeans(correct_chains)
+correct_chains_post_kmeans, incorrect_chains_post_kmeans = K_Means.applyKMeans(step2_correct_chains)
 
+print "----------------------------------------------------------------------------------------"
 print
 print "K-means Performance"
 print
-utils.SVM_Multi_Domain_Performance_Analyser(correct_chains_post_kmeans, correct_chains)
-
+utils.SVM_Multi_Domain_Performance_Analyser(correct_chains_post_kmeans, step2_correct_chains)
 
 print
 print "#############################--------OVERALL PERFORMANCE--------#####################################"
 print
-
-print
-print "Overall Performance"
 print
 total_correct_chains = correct_chains_post_kmeans + single_correct_chains
 utils.SVM_Multi_Domain_Performance_Analyser(total_correct_chains, SVM_test_data)
