@@ -41,28 +41,10 @@ def calculateInteractionEnergy(pdb, chain, number_of_clusters=None):
 
 	# Merging/Re-arranging small fragments before calculating Interaction Energy.
 
+	# Merging/Re-arranging small fragments before calculating Interaction Energy.
+
 	labels_kMeans = kMeans.labels_
-	clusters_km =  kMeans.cluster_centers_
-
-	#unecessary step as getCordsList take pdb_file as an input!
-	pdb_file = open(path_to_pdb_files+pdb+'.pdb','r')
-	cords_list, realId_list = kMeansInternal.getCordsList(pdb_file, chain.upper())
-
-	boundaries = kMeansInternal.getDomainBoundaries(labels_kMeans, realId_list, number_of_clusters)
-
-	for key,value in boundaries.iteritems():
-		boundaries[key] = list(set(value))
-
-	if not kMeansInternal.TooManyMissingResidues(boundaries):
-		boundaries = kMeansInternal.fillVoids(boundaries)
-	else:
-		boundaries = kMeansInternal.fillVoids(boundaries)
-
-#Hard coding patch size as 20
-	new_boundaries = kMeansInternal.stitchPatchesWithoutSequenceStitch(boundaries, clusters_km, cords_list, realId_list, 20)
-
 	return calculateInteractionEnergyForAGivenSplit(labels_kMeans, coordinates_list)
-
 
 '''
 Those residues which are closer than the cutoff_distance are said to be interacting. The interaction energy is the total number of 

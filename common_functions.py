@@ -42,7 +42,7 @@ def getCoordinatesListFromPDB(pdb, chain):
 		if(data[0]=='E' and data[1]=='N' and data[2]=='D'):
 			break
 
-		if(data[0]=='A' and data[1]=='T' and data[2]=='O' and data[21].lower()==chain.lower() and data[13]=='C' and data[14]=='A'):
+		if(data[0]=='A' and data[1]=='T' and data[2]=='O' and data[21].lower()==chain.lower() and data[13]=='C' and data[14]=='A') or (data[0]=='H' and data[1]=='E' and data[2]=='T' and data[21].lower()==chain.lower() and data[13]=='C' and data[14]=='A'):
 
 			val = value_finder(22, 26, data)	
 						
@@ -57,8 +57,7 @@ def getCoordinatesListFromPDB(pdb, chain):
 				coordinates_list.append(coordinates)
 
 	return coordinates_list
-
-
+	
 def value_finder(start_value, end_value, array):
 
 	coordinate = ''
@@ -163,7 +162,17 @@ def extractFeaturesAndLabelsForSVMFromJson(features_dictionary, feature_set, cla
 	for key, value in features_dictionary.iteritems():
 		pdb = key
 		
-		label = features_dictionary[key]["Domains"]
+		domains = features_dictionary[key]["Domains"]
+
+
+		if classification_type=="single_vs_multiDomain":
+			if domains > 1:
+				label = "multi"
+			else:
+				label = "single"
+		else:
+			label = domains
+
 
 		data = []
 
