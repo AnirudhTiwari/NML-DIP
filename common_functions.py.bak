@@ -1,3 +1,4 @@
+from __future__ import print_function
 import math
 import re
 import json
@@ -346,13 +347,13 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 
 
 
-	print
+	print()
 	for key, value in sorted(new_dict.iteritems()):
-		print key
+		print(key)
 		for a, b in sorted(value.iteritems()):
-			print a, b
-		print
-	print
+			print(a, b)
+		print()
+	print()
 
 '''
 This method evaluates the performance of multi-domain classification done by the SVM. 
@@ -401,22 +402,22 @@ def SVM_Multi_Domain_Performance_Analyser(correctly_labelled_chains, test_datase
 
 
 	for key, value in sorted(results_dict.iteritems()):
-		print str(key)+"-domain"
+		print(str(key)+"-domain")
 		for key_1, value_1 in sorted(value.iteritems()):
-			print key_1, value_1
-		print
+			print(key_1, value_1)
+		print()
 
-	print 
-	print "Overall Results"
+	print() 
+	print("Overall Results")
 
 	for value_1 in overall_results_dict.values():
 		for key, value in value_1.iteritems():
-			print key,
+			print(key, end=' ')
 			data_correctly_labelled = overall_results_dict[CORRECT_CHAINS][key]
 			data_test = overall_results_dict[TOTAL_CHAINS][key]
 			accuracy = "{0:.2f}".format((100.0*data_correctly_labelled)/data_test)
 
-			print "(" + str(data_correctly_labelled) + "/" + str(data_test) + ")" + " " + accuracy + "%"
+			print("(" + str(data_correctly_labelled) + "/" + str(data_test) + ")" + " " + accuracy + "%")
 
 		break
 

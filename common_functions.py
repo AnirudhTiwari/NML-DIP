@@ -1,4 +1,7 @@
 from __future__ import print_function
+from __future__ import division
+from builtins import str
+from builtins import range
 import math
 import re
 import json
@@ -91,7 +94,7 @@ def domainBoundaries(matrix, realId_list, domains):
 def isContiguous(cath_boundaries, domains):
 	# print cath_boundaries
 	cath_boundaries = cath_boundaries.split(" ")
-	cath_boundaries = filter(None, cath_boundaries)
+	cath_boundaries = [_f for _f in cath_boundaries if _f]
 	cathDict = {}
 	key = 0
 	numOFSegments = 1
@@ -162,7 +165,7 @@ def extractFeaturesAndLabelsForSVMFromJson(features_dictionary, feature_set, cla
 	X = []
 	Y = []
 
-	for key, value in features_dictionary.iteritems():
+	for key, value in features_dictionary.items():
 		pdb = key
 		
 		domains = features_dictionary[key]["Domains"]
@@ -291,7 +294,7 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 	# if classification_type=="single vs multi-domain":
 	# 	SVM_performance_dictionary.get("Total") = {"Single":{"Correct":0, "Total":0, "Accuracy":0.00}, "Multi":{"Correct":0, "Total":0, "Accuracy":0.00}}
 
-	for key, correct_value in correctly_labelled_chains_dictionary.iteritems():
+	for key, correct_value in correctly_labelled_chains_dictionary.items():
 
 		#Evaluating the overall performance for a particular key(Domain)
 		total_performance_dict = SVM_performance_dictionary["Total"]
@@ -320,13 +323,13 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 
 	if classification_type=="single_vs_multiDomain":
 		new_dict = {"Contiguous":{}, "Non-Contiguous":{}, "Total":{}}
-		for key, value in SVM_performance_dictionary.iteritems():
+		for key, value in SVM_performance_dictionary.items():
 
 			new_dict[key]["Single"] = {"Correct":0, "Total":0}
 			new_dict[key]["Multi"] = {"Correct":0, "Total":0}
 			new_dict[key]["Total"] = {"Correct":0, "Total":0}
 
-			for key1, value1 in value.iteritems():
+			for key1, value1 in value.items():
 				if key1==1:
 					new_dict[key]["Single"]["Correct"]+=SVM_performance_dictionary[key][key1]["Correct"]
 					new_dict[key]["Single"]["Total"]+=SVM_performance_dictionary[key][key1]["Total"]
@@ -348,9 +351,9 @@ def SVM_Performance_Analyser(correctly_labelled_chains, test_dataset, classifica
 
 
 	print()
-	for key, value in sorted(new_dict.iteritems()):
+	for key, value in sorted(new_dict.items()):
 		print(key)
-		for a, b in sorted(value.iteritems()):
+		for a, b in sorted(value.items()):
 			print(a, b)
 		print()
 	print()
@@ -385,10 +388,10 @@ def SVM_Multi_Domain_Performance_Analyser(correctly_labelled_chains, test_datase
 	overall_results_dict = {CORRECT_CHAINS : {CONTIGUOUS : 0, NON_CONTIGUOUS : 0, TOTAL : 0}, TOTAL_CHAINS : {CONTIGUOUS : 0, NON_CONTIGUOUS : 0, TOTAL : 0}}
 
 
-	for key, value in analyzed_correctly_labelled_chains.iteritems():
+	for key, value in analyzed_correctly_labelled_chains.items():
 		results_dict[key] = {}
 
-		for key_1, value_1 in value.iteritems():
+		for key_1, value_1 in value.items():
 			data_test = analyzed_test_dataset[key][key_1]
 			data_correctly_labelled =  analyzed_correctly_labelled_chains[key][key_1]
 
@@ -401,17 +404,17 @@ def SVM_Multi_Domain_Performance_Analyser(correctly_labelled_chains, test_datase
 				overall_results_dict[TOTAL_CHAINS][key_1]+=data_test
 
 
-	for key, value in sorted(results_dict.iteritems()):
+	for key, value in sorted(results_dict.items()):
 		print(str(key)+"-domain")
-		for key_1, value_1 in sorted(value.iteritems()):
+		for key_1, value_1 in sorted(value.items()):
 			print(key_1, value_1)
 		print()
 
 	print() 
 	print("Overall Results")
 
-	for value_1 in overall_results_dict.values():
-		for key, value in value_1.iteritems():
+	for value_1 in list(overall_results_dict.values()):
+		for key, value in value_1.items():
 			print(key, end=' ')
 			data_correctly_labelled = overall_results_dict[CORRECT_CHAINS][key]
 			data_test = overall_results_dict[TOTAL_CHAINS][key]

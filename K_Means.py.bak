@@ -1,3 +1,4 @@
+from __future__ import print_function
 # This file takes as an input chain+pdb in lowercase and outputs the result of k-means after reading k from CATH.
 # The output is in a .csv format fine tuned to be human readable when imported as an excel sheet. Also, it evaluates the
 # cluster output and deems is to be correct if more than 75% of the residues are correctly assigned to the correct cluster as per CATH. 
@@ -409,39 +410,39 @@ def makeReadable(boundaries):
 		else:
 			if len(temp_list)!=0:
 				temp_list.append(boundaries[x])
-				print min(temp_list), "-", max(temp_list), "  ",
+				print(min(temp_list), "-", max(temp_list), "  ", end=' ')
 				temp_list = []
 
 	if flag==0 and len(temp_list)!=0:
-		print  min(temp_list), "-", max(temp_list)+1,
+		print(min(temp_list), "-", max(temp_list)+1, end=' ')
 
 def printDicts(dictionary):
 	domain_counter = 1
-	print "\"",
+	print("\"", end=' ')
 	domains=len(dictionary)
 	for key in sorted(dictionary, key=dictionary.get):
 		value = dictionary[key]
-		print "Domain", domain_counter,": ",
+		print("Domain", domain_counter,": ", end=' ')
 		makeReadable(sorted(value))
 		if domain_counter!=domains:
-			print
-			print
+			print()
+			print()
 		domain_counter+=1
-	print "\"",
+	print("\"", end=' ')
 
 def printKMeansDict(k_means):
-	print "\"",
+	print("\"", end=' ')
 	domain_counter = 1
 	domains = len(k_means)
 	for key,value in k_means.iteritems():
-		print "Domain", key, ": ",
+		print("Domain", key, ": ", end=' ')
 		makeReadable(sorted(value))
 		if domain_counter!=domains:
-			print
-			print
+			print()
+			print()
 		domain_counter+=1
 
-	print "\"",
+	print("\"", end=' ')
 
 '''
 This is the ingress point for any program calling k-means. It takes as an input chain+pdb in lowercase and outputs the result of k-means after reading k from CATH.
@@ -567,10 +568,10 @@ def applyKMeans(input_chains):
 			incorrect_chains.append(pdb+chain)
 
 	if (len(missingPDB) != 0):
-		print "The following PDBs were not found"
+		print("The following PDBs were not found")
 
 		for x in missingPDB:
-			print x
+			print(x)
 
 	return correct_chains, incorrect_chains
 	

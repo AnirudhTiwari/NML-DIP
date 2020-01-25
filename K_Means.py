@@ -1,12 +1,14 @@
 from __future__ import print_function
+from __future__ import division
 # This file takes as an input chain+pdb in lowercase and outputs the result of k-means after reading k from CATH.
 # The output is in a .csv format fine tuned to be human readable when imported as an excel sheet. Also, it evaluates the
 # cluster output and deems is to be correct if more than 75% of the residues are correctly assigned to the correct cluster as per CATH. 
 
+from builtins import range
+from past.utils import old_div
 from sklearn.cluster import *
 import numpy as np
 import re
-from compiler.ast import flatten
 import itertools
 import common_functions as utils
 
@@ -61,10 +63,10 @@ def getDomainBoundaries(matrix, realId_list, domains):
 def TooManyMissingResidues(boundaries):
 	counter = 0
 	artificially_added = []
-	for key, value in boundaries.iteritems():
+	for key, value in boundaries.items():
 		for x in range(min(value), max(value)+1):
 			if x not in value:
-				if x not in flatten(boundaries.values()):
+				if x not in list(itertools.chain(*boundaries.values())):
 					counter+=1
 					artificially_added.append(x)
 
@@ -75,10 +77,10 @@ def TooManyMissingResidues(boundaries):
 	return False
 
 def fillVoids(boundaries):
-	for key, value in boundaries.iteritems():
+	for key, value in boundaries.items():
 		for x in range(min(value), max(value)+1):
 			if x not in value:
-				if x not in flatten(boundaries.values()):
+				if x not in list(itertools.chain(*boundaries.values())):
 					value.append(x)
 		boundaries[key] = sorted(value)
 	return boundaries
@@ -128,7 +130,7 @@ def internalStitch(island, patch_length):
 	return sorted(island)
 
 def sequenceStitch(k_means, island):
-	for key, value in k_means.iteritems():
+	for key, value in k_means.items():
 		if len(value)==0:
 			k_means[key] = island[0]
 			island.remove(island[0])
@@ -139,7 +141,7 @@ def sequenceStitch(k_means, island):
 
 	remaining_island = []
 
-	for key, values in k_means.iteritems():
+	for key, values in k_means.items():
 		if minimum > min(values):
 			minimum = min(values)
 
@@ -148,7 +150,7 @@ def sequenceStitch(k_means, island):
 
 	for patch in island:
 		flag = 0
-		for key, value in k_means.iteritems():
+		for key, value in k_means.items():
 			if max(patch) == minimum - 1 and min(value)==minimum:
 				flag = 1
 				k_means[key] = sorted(list(k_means[key] + patch))
@@ -180,7 +182,7 @@ def calculateCentroid(residues, coordinates, realId_list):
 				centroid[a] = centroid[a] + coordinates[realId_list.index(residue)][a]
 
 	for x in range(len(centroid)):
-		centroid[x] = (1.0*centroid[x])/len(residues)
+		centroid[x] = old_div((1.0*centroid[x]),len(residues))
 
 	return centroid
 
@@ -190,7 +192,7 @@ def centroidStitch(k_means, island, coordinates, realId_list):
 	# print
 	cluster_centroid_dict = {};
 
-	for key, value in k_means.iteritems():
+	for key, value in k_means.items():
 		if len(value) == 0:
 			return k_means
 		cluster_centroid = calculateCentroid(value, coordinates, realId_list)
@@ -203,7 +205,7 @@ def centroidStitch(k_means, island, coordinates, realId_list):
 
 		minimum_distance = 100000000000
 
-		for key, value in cluster_centroid_dict.iteritems():
+		for key, value in cluster_centroid_dict.items():
 			if len(patch) < patch_size:
 				if min(patch) - 1 in k_means[key] or max(patch) + 1 in k_means[key]:
 					distance_with_cluster  =  utils.dist(value, patch_centroid)
@@ -223,7 +225,7 @@ def centroidStitch(k_means, island, coordinates, realId_list):
 
 def stitchPatches(k_means, cluster_centers, coordinates, realId_list, patch_length): 
 	island = []
-	for key, value in k_means.iteritems():
+	for key, value in k_means.items():
 		x=0
 		while x!=len(value):
 			counter=0
@@ -247,7 +249,7 @@ def stitchPatches(k_means, cluster_centers, coordinates, realId_list, patch_leng
 	island = internalStitch(sorted(island), patch_length)
 
 
-	for key, value in k_means.iteritems():
+	for key, value in k_means.items():
 		for patches in island:
 			for x in patches:
 				if x in value:
@@ -266,7 +268,7 @@ def stitchPatchesWithoutSequenceStitch(k_means, cluster_centers, coordinates, re
 	# print k_means
 	# print
 	island = []
-	for key, value in k_means.iteritems():
+	for key, value in k_means.items():
 		x=0
 		while x!=len(value):
 			counter=0
@@ -297,10 +299,10 @@ def stitchPatchesWithoutSequenceStitch(k_means, cluster_centers, coordinates, re
 
 	island_length =  sum([len(v) for v in island])
 
-	k_means_length =  sum([len(v) for v in k_means.values()])
+	k_means_length =  sum([len(v) for v in list(k_means.values())])
 
 	if island_length != k_means_length:
-		for key, value in k_means.iteritems():
+		for key, value in k_means.items():
 			for patches in island:
 				for x in patches:
 					if x in value:
@@ -322,12 +324,12 @@ def makeList(domain):
 	chain = domain[1]
 	insert_character = domain[3]
 	copy_domain = domain
-	domain = list(filter(lambda x: x!=chain and x!=insert_character, domain[1:]))
+	domain = list([x for x in domain[1:] if x!=chain and x!=insert_character])
 
 	if chain==copy_domain[2]:
 		domain = [copy_domain[2]] + domain
 
-	for x in xrange(0,len(domain)-1,2):
+	for x in range(0,len(domain)-1,2):
 		temp_list = []
 		lower_bound = int(domain[x])
 		upper_bound = int(domain[x+1])
@@ -335,12 +337,11 @@ def makeList(domain):
 		for y in range(lower_bound, upper_bound+1):
 			temp_list.append(y)
 		domainList.append(temp_list)
-
-	return flatten(domainList)
+	return list(itertools.chain(*domainList))
 
 def getCathBoundaries(cath_boundaries, domains):
 	cath_boundaries = cath_boundaries.split(" ")
-	cath_boundaries = filter(None, cath_boundaries)
+	cath_boundaries = [_f for _f in cath_boundaries if _f]
 	cathDict = {}
 	key = 0
 	numOFSegments = 1
@@ -367,7 +368,7 @@ def getCathBoundaries(cath_boundaries, domains):
 def matchDicts(cath, k_means):
 	perm_base_list = []
 
-	for key, value in k_means.iteritems():
+	for key, value in k_means.items():
 		perm_base_list.append(key)
 
 	final_list = perm_base_list
@@ -381,7 +382,7 @@ def matchDicts(cath, k_means):
 		overlap = 0
 		perm_iter = 0
 
-		for key,value in cath.iteritems():
+		for key,value in cath.items():
 			set_a = set(value)
 			set_b = set(k_means[permutation[perm_iter]])
 			overlap+=len(set_a.intersection(set_b))
@@ -434,7 +435,7 @@ def printKMeansDict(k_means):
 	print("\"", end=' ')
 	domain_counter = 1
 	domains = len(k_means)
-	for key,value in k_means.iteritems():
+	for key,value in k_means.items():
 		print("Domain", key, ": ", end=' ')
 		makeReadable(sorted(value))
 		if domain_counter!=domains:
@@ -494,7 +495,7 @@ def applyKMeans(input_chains):
 		boundaries = getDomainBoundaries(labels_km, realId_list, domains) #The clusters(boundaries) outputted by k-means
 
 		#Removing duplicates. This happen when there are two set of coordinates of the same residue like 142 and 142A. I just pick the first one.
-		for key,value in boundaries.iteritems():
+		for key,value in boundaries.items():
 			boundaries[key] = list(set(value))
 
 		#There are missing residues in pdb files but are not always shown in CATH data. 
@@ -515,7 +516,7 @@ def applyKMeans(input_chains):
 		new_boundaries = stitchPatches(boundaries, clusters_km, cords_list, realId_list, patch_size)
 
 		#Again removing duplicates post stitching patches.
-		for key,value in new_boundaries.iteritems():
+		for key,value in new_boundaries.items():
 			new_boundaries[key] = list(set(value))
 
 		#This a dictionary of the CATH domains and their correpsonding boundaries.
@@ -562,7 +563,7 @@ def applyKMeans(input_chains):
 
 		chain = chain.upper()
 
-		if (1.0*overlap)/total_residues >= 0.75:
+		if old_div((1.0*overlap),total_residues) >= 0.75:
 			correct_chains.append(pdb+chain)
 		else:
 			incorrect_chains.append(pdb+chain)

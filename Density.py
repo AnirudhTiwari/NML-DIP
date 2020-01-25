@@ -3,6 +3,8 @@ For a given list of coordinates of a cluster, this method calculates the density
 of the cluster 
 '''
 from __future__ import print_function
+from __future__ import division
+from past.utils import old_div
 import common_functions as utils
 
 def calculateDensity(pdb, chain):
@@ -24,9 +26,9 @@ def calculateDensityOfACluster(coordinates):
 
 	#Finding centroid by dividing the sum of all points along each axis by the total number of points.
 	try:
-		centroid_x = 1.0*centroid_x/len(coordinates)
-		centroid_y = 1.0*centroid_y/len(coordinates)
-		centroid_z = 1.0*centroid_z/len(coordinates)
+		centroid_x = old_div(1.0*centroid_x,len(coordinates))
+		centroid_y = old_div(1.0*centroid_y,len(coordinates))
+		centroid_z = old_div(1.0*centroid_z,len(coordinates))
 	except Exception as e:
 		print("behold Null pointer", e, end=' ')
 
@@ -41,7 +43,7 @@ def calculateDensityOfACluster(coordinates):
 
 
 	#Average over the size of cluster, to give an avg. radius of the cluster.
-	radius = radius/len(coordinates)
+	radius = old_div(radius,len(coordinates))
 
-	density = 1.0*len(coordinates)/(radius*radius*radius)
+	density = old_div(1.0*len(coordinates),(radius*radius*radius))
 	return density

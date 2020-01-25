@@ -65,7 +65,7 @@ def calculateInteractionEnergyForAGivenSplit(cluster_labels, coordinates_list):
 
 	intra_cluster_interaction_energy_dict = {}
 
-	for key, value in list(clusters_dict.items()):
+	for key, value in clusters_dict.items():
 		intra_cluster_interaction_energy_dict[key] = calculateIntraClusterInteractionEnergy(value, coordinates_list)
 
 

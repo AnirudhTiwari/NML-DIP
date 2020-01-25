@@ -1,7 +1,7 @@
 from __future__ import print_function
+from builtins import input
 import SVM_v2
 import common_functions as utils
-import multiDomainIdentifier
 import calculateFeatures
 import csv
 import json
@@ -46,7 +46,7 @@ def get_test_dataset_features(x):
 
 #Taking user input for test dataset
 while 1:
-	testing_dataset_input = raw_input("Input Testing Dataset: Type A for Benchmark_2, B for Benchmark_3, C for ASTRAL SCOP 30, D for NR_Dataset\n")
+	testing_dataset_input = input("Input Testing Dataset: Type A for Benchmark_2, B for Benchmark_3, C for ASTRAL SCOP 30, D for NR_Dataset\n")
 	try:
 		testing_dataset = get_input_dataset_name(testing_dataset_input)
 		print("You selected " + testing_dataset + " for testing the SVM\n")
