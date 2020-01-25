@@ -2,7 +2,6 @@
 For a given list of coordinates of a cluster, this method calculates the density by dividing total number of entries in the cluster by approximate volume
 of the cluster 
 '''
-from __future__ import print_function
 import common_functions as utils
 
 def calculateDensity(pdb, chain):
@@ -27,8 +26,8 @@ def calculateDensityOfACluster(coordinates):
 		centroid_x = 1.0*centroid_x/len(coordinates)
 		centroid_y = 1.0*centroid_y/len(coordinates)
 		centroid_z = 1.0*centroid_z/len(coordinates)
-	except Exception as e:
-		print("behold Null pointer", e, end=' ')
+	except Exception, e:
+		print "behold Null pointer", e,
 
 	centroid = [centroid_x, centroid_y, centroid_z]		
 
