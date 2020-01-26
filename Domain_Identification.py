@@ -49,7 +49,7 @@ while 1:
 	testing_dataset_input = input("Input Testing Dataset: Type A for Benchmark_2, B for Benchmark_3, C for ASTRAL SCOP 30, D for NR_Dataset\n")
 	try:
 		testing_dataset = get_input_dataset_name(testing_dataset_input)
-		print("You selected " + testing_dataset + " for testing the SVM\n")
+		print("You selected " + testing_dataset + " for testing the algorithm\n")
 		break
 	except KeyError:
 		print("Invalid input!!")
