@@ -6,12 +6,12 @@ Algorithm developed by Anirudh Tiwari and Dr. Nita Parekh for finding Structural
 2. Scikit-learn module; the Scikit-learn module can be installed using Pip, install Pip from [here](https://pip.pypa.io/en/stable/installing/).
 3. Git; Download and install Git from [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 
-There are two versions of the algorithm hosted on two separate branches of this repository. The code hosted on the *master* branch is to be used to reproduce the results on the 4 test datasets (details below). The code hosted on the *pdbTestBranch* can be used to test the algorithm on any PDB(s). 
+There are two versions of the algorithm hosted on two separate branches of this repository. The code hosted on the *master* branch is to be used to execute the algorithm on the 4 test datasets (details below). The code hosted on the *pdbTestBranch* can be used to test the algorithm on any PDB(s). 
 
 The details of how to execute the code on the master branch can be found below. For details on how to run the code on the *pdbTestBranch*, read the README present on the corresponding branch.
 
-## Branch: Master; Code to run on 4 test datasets ##
-The code hosted on this branch this branch is to reproduce the results that we have presented in the paper on the four datasets, namely, **benchmark_2**, **benchmark_3**, **ASTRAL SCOP 30** & **NR_Dataset**. Follow the steps below on shell/Powershell/Terminal to execute the code:
+## Branch: master ##
+The code hosted on this branch this branch is to reproduce the results that we have presented in the thesis/paper on the four datasets, namely, **benchmark_2**, **benchmark_3**, **ASTRAL SCOP 30** & **NR_Dataset**. Follow the steps below on shell/Powershell/Terminal to execute the code:
 1. `cd` to the directory of your choice and download the repository using git clone:
 
    ```$git clone https://github.com/AnirudhTiwari/ProteinDomainIdentificationAlgorithm.git```
@@ -20,7 +20,7 @@ The code hosted on this branch this branch is to reproduce the results that we h
 
 3. Start the execution by running: `$python Domain_Identification.py`
 
-4. The program will take a few seconds to compile and will show a prompt which will ask you select a dataset out of the 4 datasets on which you want to run the code. Select the dataset by pressing the relevant key. The code has 3 steps out of which 2 will execute in a few seconds and the last step will take around a minute or two (max) for larger datasets like ASTRAL SCOP/NR_Dataset. The output of each step is explained below.
+4. The program will take a few seconds to compile and will show a prompt which will ask you select a dataset out of the 4 datasets on which you want to run the code. Select the dataset by pressing the relevant key. The code has 3 steps out of which 2 will execute in a few seconds and the last step will take around a minute or two (max) for larger datasets like ASTRAL SCOP/NR_Dataset. The accuracy presented is determined by comparing our results with CATH annotation. The output of each step is explained below.
 
 ### Step 1: Classification Between Single- & Multi-domain Proteins.
 The output of this step can look like this:
@@ -55,7 +55,7 @@ Total {'Correct': 127, 'Total': 152, 'Accuracy': '83.55%'}
 ----------------------------------------------------------------------------------------
 ```
 
-The algorithm first tells the user the features that are being used to train and test the SVM. Then, the performance of the SVM is presented. Here, the first blob under **Contiguous** shows the performance of our algorithm in identifying contiguous domains on single and multi-domain proteins. The second blob under **Non-Contiguous** shows the results on the non-contiguous domains. The final blob under **Total** shows the overall result on contiguous and non-contiguous domains combined. The accuracy is determined by comparing our results with CATH annotation.
+The algorithm first tells the user the features that are being used to train and test the SVM. Then, the performance of the SVM is presented. Here, the first blob under **Contiguous** shows the performance of our algorithm in identifying contiguous domains on single and multi-domain proteins. The second blob under **Non-Contiguous** shows the results on the non-contiguous domains. The final blob under **Total** shows the overall result on contiguous and non-contiguous domains combined.
 
 ### Step 2: Identification of Number of Domains in Multi-domain Proteins
 The output of this step can look like this:
