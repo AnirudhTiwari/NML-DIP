@@ -1,3 +1,5 @@
 output*
 *.pyc
 *.pdb
+out.csv
+*.xslx
