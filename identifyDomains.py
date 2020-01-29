@@ -36,19 +36,33 @@ def getTestDataset():
 		testDataset = f.readlines()
 	return testDataset
 
+def executeAlgorithmWhenTheNumberOfDomainsIsProvided(pdb, domains):
+	stepThree.applyKMeansWithPostProcessing(pdb, domains)
+
+def executeAlgorithmWhenTheNumberOfDomainsIsNotProvided(pdb):
+	label = stepOne.classifySingleVsMultiDomainProtein(pdb, SINGLE_VS_MULTI_FEATURE_SET, singleVsMultiDomainClassifier)
+	if label=="multi":
+		domains = stepTwo.classifyMultiDomainProteins(pdb, MULTI_DOMAIN_FEATURE_SET, multiDomainClassifier)
+	else:
+		domains = 1
+	stepThree.applyKMeansWithPostProcessing(pdb, domains)
+
 #Main execution of the program begins here
 testDataset = getTestDataset()
 singleVsMultiDomainClassifier = getSingleVsMultiDomainClassifier(SINGLE_VS_MULTI_FEATURE_SET)
 multiDomainClassifier = getMultiDomainClassifier(MULTI_DOMAIN_FEATURE_SET)
 
-for pdb in testDataset:
-	if pdb.isspace()!=True: 
-		pdb = pdb.strip()
-		label = stepOne.classifySingleVsMultiDomainProtein(pdb, SINGLE_VS_MULTI_FEATURE_SET, singleVsMultiDomainClassifier)
-
-		if label=="multi":
-			domains = stepTwo.classifyMultiDomainProteins(pdb, MULTI_DOMAIN_FEATURE_SET, multiDomainClassifier)
-		else:
-			domains = 1
-
-		stepThree.applyKMeansWithPostProcessing(pdb, domains)
+for entry in testDataset:
+	if entry.isspace()!=True:
+		entry = entry.strip()
+		entry = entry.split()
+		pdb = entry[0].strip()
+		print("#########################################################################")
+		if len(entry)==2: #Implies that the user has provided the number of domains and only the last step is to be applied.
+			domains = int(entry[1].strip())
+			print("User provided no. of domains: {} for pdb: {}, Chain: {}".format(domains, pdb[:4], pdb[4]))
+			executeAlgorithmWhenTheNumberOfDomainsIsProvided(pdb, domains)
+			
+		else: #Implies that the user has not provided the number of domains and all the 3 steps of the algorithm is to be applied.
+			executeAlgorithmWhenTheNumberOfDomainsIsNotProvided(pdb)
+		

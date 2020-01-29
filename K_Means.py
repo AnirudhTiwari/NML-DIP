@@ -631,8 +631,8 @@ def applyKMeansForSingleProteinWithGivenK(pdbId, k):
 	try:
 		new_boundaries = stitchPatches(boundaries, clusters_km, cords_list, realId_list, patch_size)
 	except IndexError:
-		print("#########################################################################")
-		print("[WARNING] Problem applying post-processing for PDB: " + pdb + ", Chain: " + chain)
+		print("[WARNING] Problem applying post-processing for PDB: " + pdb + ", Chain: " + chain.upper() + ", ",end = '')
+		print("expect faulty output!")
 		new_boundaries = boundaries
 	finally: 
 
@@ -663,7 +663,6 @@ def applyKMeansForSingleProteinWithGivenK(pdbId, k):
 			domain_counter+=1
 
 		#Print CATH and K-Means boundaries in a human readable format
-		print("#########################################################################")
 		print("PDB: "+pdb + ", Chain: "+chain.upper())
 		print("Number of domains: " + str(k)) 
 		printKMeansDict(sorted_kMeansBoundaries)
