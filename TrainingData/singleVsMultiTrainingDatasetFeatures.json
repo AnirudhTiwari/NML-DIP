@@ -573,13 +573,6 @@
         "Radius_Of_Gyration": "33.4", 
         "Density": "0.0197"
     }, 
-    "1g3jD": {
-        "Domains": 1, 
-        "Length": 34, 
-        "Interaction_Energy": "8.22", 
-        "Radius_Of_Gyration": "27.6", 
-        "Density": "0.00275"
-    }, 
     "2wscK": {
         "Domains": 1, 
         "Length": 100, 
@@ -3947,13 +3940,6 @@
         "Radius_Of_Gyration": "14.3", 
         "Density": "0.057"
     }, 
-    "2bbvE": {
-        "Domains": 1, 
-        "Length": 16, 
-        "Interaction_Energy": "35.0", 
-        "Radius_Of_Gyration": "13.7", 
-        "Density": "0.0543"
-    }, 
     "1v2bA": {
         "Domains": 1, 
         "Length": 148, 
@@ -4065,13 +4051,6 @@
         "Interaction_Energy": "7.87", 
         "Radius_Of_Gyration": "15.7", 
         "Density": "0.0493"
-    }, 
-    "1cldA": {
-        "Domains": 1, 
-        "Length": 33, 
-        "Interaction_Energy": "12.5", 
-        "Radius_Of_Gyration": "8.86", 
-        "Density": "0.0776"
     }, 
     "1vloA": {
         "Domains": 4, 
@@ -6705,13 +6684,6 @@
         "Radius_Of_Gyration": "28.3", 
         "Density": "0.063"
     }, 
-    "1abzA": {
-        "Domains": 1, 
-        "Length": 38, 
-        "Interaction_Energy": "17.9", 
-        "Radius_Of_Gyration": "11.2", 
-        "Density": "0.0371"
-    }, 
     "2h5aX": {
         "Domains": 4, 
         "Length": 460, 
@@ -7363,13 +7335,6 @@
         "Radius_Of_Gyration": "12.5", 
         "Density": "0.0565"
     }, 
-    "1novE": {
-        "Domains": 1, 
-        "Length": 17, 
-        "Interaction_Energy": "32.4", 
-        "Radius_Of_Gyration": "12.9", 
-        "Density": "0.0387"
-    }, 
     "1e7lA": {
         "Domains": 2, 
         "Length": 166, 
@@ -7741,13 +7706,6 @@
         "Radius_Of_Gyration": "30.0", 
         "Density": "0.0241"
     }, 
-    "1jpwD": {
-        "Domains": 1, 
-        "Length": 24, 
-        "Interaction_Energy": "12.0", 
-        "Radius_Of_Gyration": "24.2", 
-        "Density": "0.00273"
-    }, 
     "2i06A": {
         "Domains": 2, 
         "Length": 305, 
@@ -7845,20 +7803,6 @@
         "Interaction_Energy": "9.7", 
         "Radius_Of_Gyration": "25.6", 
         "Density": "0.0589"
-    }, 
-    "2bbvD": {
-        "Domains": 1, 
-        "Length": 16, 
-        "Interaction_Energy": "35.9", 
-        "Radius_Of_Gyration": "14.8", 
-        "Density": "0.0513"
-    }, 
-    "2bbvF": {
-        "Domains": 1, 
-        "Length": 16, 
-        "Interaction_Energy": "35.9", 
-        "Radius_Of_Gyration": "13.6", 
-        "Density": "0.0535"
     }, 
     "1iq8B": {
         "Domains": 4, 
@@ -8587,13 +8531,6 @@
         "Interaction_Energy": "7.78", 
         "Radius_Of_Gyration": "20.7", 
         "Density": "0.0317"
-    }, 
-    "2prgC": {
-        "Domains": 1, 
-        "Length": 32, 
-        "Interaction_Energy": "4.88", 
-        "Radius_Of_Gyration": "29.2", 
-        "Density": "0.00144"
     }, 
     "1vghA": {
         "Domains": 1, 
@@ -10435,13 +10372,6 @@
         "Interaction_Energy": "7.52", 
         "Radius_Of_Gyration": "18.9", 
         "Density": "0.0311"
-    }, 
-    "1devD": {
-        "Domains": 1, 
-        "Length": 39, 
-        "Interaction_Energy": "14.4", 
-        "Radius_Of_Gyration": "19.7", 
-        "Density": "0.0116"
     }, 
     "2gmqA": {
         "Domains": 1, 
@@ -16764,13 +16694,6 @@
         "Radius_Of_Gyration": "14.7", 
         "Density": "0.0285"
     }, 
-    "1freA": {
-        "Domains": 1, 
-        "Length": 39, 
-        "Interaction_Energy": "12.1", 
-        "Radius_Of_Gyration": "9.33", 
-        "Density": "0.0666"
-    }, 
     "1v0eD": {
         "Domains": 4, 
         "Length": 666, 
@@ -18828,13 +18751,6 @@
         "Interaction_Energy": "5.49", 
         "Radius_Of_Gyration": "27.4", 
         "Density": "0.042"
-    }, 
-    "1p0t1": {
-        "Domains": 1, 
-        "Length": 25, 
-        "Interaction_Energy": "15.9", 
-        "Radius_Of_Gyration": "17.1", 
-        "Density": "0.0566"
     }, 
     "2igdA": {
         "Domains": 1, 
