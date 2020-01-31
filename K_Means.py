@@ -576,25 +576,10 @@ def applyKMeans(input_chains):
 
 
 def applyKMeansForSingleProteinWithGivenK(pdbId, k):
-	with open('HelperData/CathDomall', 'r') as f:
-		cath_data = f.readlines()
-
 	path_to_pdb_files = 'All PDBs/'
-	cath_dict = {} # A dictionary to hold cath pdb+chain and corresponding entry in CATH
-
-	for x in cath_data:
-		if x[0]!='#':
-			cath_dict[x[:5].lower()] = x
 
 	pdb = pdbId[:4].lower()
 	chain = pdbId[4].lower()
-
-	cath_entry = cath_dict[pdb+chain]
-	cath_domains = int(cath_entry[7] + cath_entry[8])
-	
-	cath_entry = cath_dict[pdb+chain]
-
-	domain_boundary = cath_entry[14:].strip()
 
 	open_pdb = open(path_to_pdb_files+pdb+'.pdb','r') #Opening pdb file for k-means
 	
@@ -640,12 +625,8 @@ def applyKMeansForSingleProteinWithGivenK(pdbId, k):
 		for key,value in new_boundaries.items():
 			new_boundaries[key] = list(set(value))
 
-		#This a dictionary of the CATH domains and their correpsonding boundaries.
-		cathBoundaries = getCathBoundaries(domain_boundary, cath_domains)
-
 		#Final boundaries of both CATH and K-Means which are sorted based on the values of residues, for example the first cluster should be from 1-80.
 		#The second from 81-160 and not the other way round.
-		sorted_cathBoundaries = {}
 		sorted_kMeansBoundaries = {}
 
 		domain_counter = 1
@@ -657,12 +638,6 @@ def applyKMeansForSingleProteinWithGivenK(pdbId, k):
 
 		domain_counter = 1
 
-		for key in sorted(cathBoundaries, key=cathBoundaries.get):
-			value = cathBoundaries[key]
-			sorted_cathBoundaries[domain_counter] = value
-			domain_counter+=1
-
-		#Print CATH and K-Means boundaries in a human readable format
 		print("PDB: "+pdb + ", Chain: "+chain.upper())
 		print("Number of domains: " + str(k)) 
 		printKMeansDict(sorted_kMeansBoundaries)

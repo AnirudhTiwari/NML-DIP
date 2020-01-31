@@ -77,12 +77,15 @@ for entry in testDataset:
 		entry = entry.strip()
 		entry = entry.split()
 		pdb = entry[0].strip()
-		if len(entry)==2: #Implies that the user has provided the number of domains and only the last step is to be applied.
-			domains = int(entry[1].strip())
-			print("##############################################################################")
-			print("User provided no. of domains: {} for PDB: {}, Chain: {}".format(domains, pdb[:4], pdb[4]))
-			executeAlgorithmWhenTheNumberOfDomainsIsProvided(pdb, domains)
+		try:
+			if len(entry)==2: #Implies that the user has provided the number of domains and only the last step is to be applied.
+				domains = int(entry[1].strip())
+				print("##############################################################################")
+				print("User provided no. of domains: {} for PDB: {}, Chain: {}".format(domains, pdb[:4], pdb[4]))
+				executeAlgorithmWhenTheNumberOfDomainsIsProvided(pdb, domains)
 			
-		else: #Implies that the user has not provided the number of domains and all the 3 steps of the algorithm is to be applied.
-			executeAlgorithmWhenTheNumberOfDomainsIsNotProvided(pdb)
+			else: #Implies that the user has not provided the number of domains and all the 3 steps of the algorithm is to be applied.
+				executeAlgorithmWhenTheNumberOfDomainsIsNotProvided(pdb)
+		except:
+			print("Error finding domains for PDB: {}, please contact the developer for help.".format(pdb))
 		print()
