@@ -116,15 +116,6 @@
         "Interaction_Energy": "11.7", 
         "Length": 105
     }, 
-    "1abzA": {
-        "Density": "0.0371", 
-        "Domains": 1, 
-        "IS-Sum_2": "17.9", 
-        "IS-Sum_3": "31.7", 
-        "IS-Sum_4": "49.9", 
-        "Interaction_Energy": "17.9", 
-        "Length": 38
-    }, 
     "1adnA": {
         "Density": "0.0281", 
         "Domains": 1, 
@@ -1475,24 +1466,6 @@
         "Interaction_Energy": "2.56", 
         "Length": 171
     }, 
-    "1fqjC": {
-        "Density": "0.0438", 
-        "Domains": 1, 
-        "IS-Sum_2": "9.35", 
-        "IS-Sum_3": "29.6", 
-        "IS-Sum_4": "54.0", 
-        "Interaction_Energy": "9.35", 
-        "Length": 38
-    }, 
-    "1freA": {
-        "Density": "0.0666", 
-        "Domains": 1, 
-        "IS-Sum_2": "12.1", 
-        "IS-Sum_3": "50.5", 
-        "IS-Sum_4": "87.5", 
-        "Interaction_Energy": "12.1", 
-        "Length": 39
-    }, 
     "1fs0G": {
         "Density": "0.0415", 
         "Domains": 2, 
@@ -1573,15 +1546,6 @@
         "IS-Sum_4": "18.1", 
         "Interaction_Energy": "1.8", 
         "Length": 393
-    }, 
-    "1g3jD": {
-        "Density": "0.00275", 
-        "Domains": 1, 
-        "IS-Sum_2": "8.22", 
-        "IS-Sum_3": "16.4", 
-        "IS-Sum_4": "37.6", 
-        "Interaction_Energy": "8.22", 
-        "Length": 34
     }, 
     "1g5aA": {
         "Density": "0.0468", 
@@ -7208,15 +7172,6 @@
         "Interaction_Energy": "24.2", 
         "Length": 71
     }, 
-    "2bbvD": {
-        "Density": "0.0513", 
-        "Domains": 1, 
-        "IS-Sum_2": "35.9", 
-        "IS-Sum_3": "1.24e+02", 
-        "IS-Sum_4": "2.09e+02", 
-        "Interaction_Energy": "35.9", 
-        "Length": 16
-    }, 
     "2bf6A": {
         "Density": "0.0529", 
         "Domains": 2, 
@@ -8971,15 +8926,6 @@
         "IS-Sum_4": "23.7", 
         "Interaction_Energy": "3.45", 
         "Length": 445
-    }, 
-    "2prgC": {
-        "Density": "0.00144", 
-        "Domains": 1, 
-        "IS-Sum_2": "4.88", 
-        "IS-Sum_3": "21.8", 
-        "IS-Sum_4": "69.9", 
-        "Interaction_Energy": "4.88", 
-        "Length": 32
     }, 
     "2prvB": {
         "Density": "0.0522", 

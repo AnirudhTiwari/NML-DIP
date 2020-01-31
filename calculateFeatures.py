@@ -133,6 +133,45 @@ def calculateFeatures_v2(input_chains, feature_set, num_of_clusters):
 
 	return feature_map
 
+def calculateFeatures_v3(input_chains, feature_set, num_of_clusters):
+	feature_map = {}
+	for input_chain in input_chains:
+		feature_values = []
+		input_chain = list(input_chain)
+
+		pdb = ''.join(input_chain[:4])
+		chain = input_chain[4]
+
+		try:
+			feature_map[pdb+chain.upper()] = {}
+
+			feature_map[pdb+chain.upper()]["Domains"] = utils.findNumberOfDomains(pdb, chain)
+
+			for feature in feature_set:
+				feature_calculator = features.get(feature, "Invalid input feature") 
+
+				if feature=="Interaction_Energy" or feature=="Density_Sum" or feature=="IS-Sum_2" or feature=="IS-Sum_3" or feature=="IS-Sum_4":
+					if feature=="IS-Sum_2":
+						feature_value = feature_calculator(pdb, chain, 2)
+
+					elif feature=="IS-Sum_3":
+						feature_value = feature_calculator(pdb, chain, 3)
+						
+					elif feature=="IS-Sum_4":
+						feature_value = feature_calculator(pdb, chain, 4)
+					else:
+						feature_value = feature_calculator(pdb, chain, num_of_clusters)
+				else:
+					feature_value = feature_calculator(pdb, chain)	
+
+				if isinstance(feature_value, float):
+					feature_map[pdb+chain.upper()][feature] = '{0:.3}'.format(feature_value)
+				else:
+					feature_map[pdb+chain.upper()][feature] = feature_value
+		except:
+			print("Error calculating features for:", pdb, chain)
+
+	return feature_map
 
 
 
