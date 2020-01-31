@@ -1,3 +1,10 @@
+'''
+TODO: This file is a mess as of Jan'2020. 
+There are functions which needs to be moved to different files.
+For example: I have created a new file pdbParser.py which should contain 
+all the PDB parser scripts. The length, [x,y,z] coordinates parser etc. should 
+reside there.
+'''
 from __future__ import print_function
 from __future__ import division
 from builtins import str
