@@ -5,6 +5,7 @@ Algorithm developed by Anirudh Tiwari and Dr. Nita Parekh for finding Structural
 1. Python 2.7 or Python 3.x; Download & Install from [here](https://www.python.org/downloads/).
 2. Scikit-learn module; the Scikit-learn module can be installed using Pip, install Pip from [here](https://pip.pypa.io/en/stable/installing/).
 3. Git; Download and install Git from [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+4. Future module; install it using `pip install future`
 
 There are two versions of the algorithm hosted on two separate branches of this repository. The code hosted on the *master* branch is to be used to execute the algorithm on the 4 test datasets (details below). The code hosted on the *pdbTestBranch* can be used to test the algorithm on any PDB(s). 
 
